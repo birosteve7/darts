@@ -41,7 +41,7 @@
             <Button id="checkoutOK" fx:id="checkoutOK" layoutX="42.0" layoutY="138.0" mnemonicParsing="false" onAction="#handleCheckout" prefHeight="65.0" prefWidth="178.0" text="OK" />
          </children>
       </Pane>
-      <Pane id="scorePane" fx:id="scorePane" prefHeight="480.0" prefWidth="370.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane id="scorePane" fx:id="scorePane" prefHeight="480.0" prefWidth="370.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#50a9cd" height="488.0" layoutX="-9.0" layoutY="-7.0" stroke="BLACK" strokeType="INSIDE" width="381.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#10588c" height="263.0" layoutY="224.0" stroke="#ca0d0d" strokeType="OUTSIDE" width="370.0" />
@@ -196,7 +196,7 @@
             <Line endX="-3.20001220703125" endY="264.0" layoutX="189.0" layoutY="103.0" startX="-4.0" startY="-4.0" />
          </children>
       </Pane>
-      <Pane id="userPane" fx:id="userPane" layoutX="37.0" layoutY="131.0" prefHeight="158.0" prefWidth="308.0" visible="false" AnchorPane.bottomAnchor="191.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="131.0">
+      <Pane id="userPane" fx:id="userPane" layoutX="37.0" layoutY="131.0" prefHeight="158.0" prefWidth="308.0" AnchorPane.bottomAnchor="191.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="131.0">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#50a9cd" height="180.0" layoutX="-28.0" layoutY="-12.0" stroke="#bce324" strokeType="OUTSIDE" strokeWidth="5.0" width="358.0" />
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="4.0" prefHeight="75.0" prefWidth="296.0" text="Please give your player name:" textFill="#c8da51">
