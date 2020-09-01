@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package darts;
 
 import java.sql.Connection;
@@ -22,7 +17,7 @@ import java.util.logging.Logger;
  * @author István
  */
 public class DB {
-    final String URL = "jdbc:derby:sampleDB;create=true";
+    final String URL = "jdbc:derby:dartStatDB;create=true";
     final String USERNAME = "";
     final String PASSWORD = "";
     
@@ -36,7 +31,6 @@ public class DB {
         //Megpróbáljuk életre kelteni
         try {
             conn = DriverManager.getConnection(URL);
-            System.out.println("A híd létrejött");
         } catch (SQLException ex) {
             System.out.println("Valami baj van a connection (híd) létrehozásakor.");
             System.out.println(""+ex);
@@ -73,7 +67,6 @@ public class DB {
     }
     
     public ArrayList<Stats> getAllStats(){
-        System.out.println("darts.DB.getAllStats()");
         String sql = "select * from darts";
         ArrayList<Stats> stats = null;
         try {
@@ -88,12 +81,10 @@ public class DB {
             System.out.println("Valami baj van  a kiolvasáskor");
             System.out.println(""+ex);
         }
-
        return stats; 
     }
     
     public Stats getOwnStats(String userName){
-        System.out.println("darts.DB.getAllStats()");
         String sql = "select * from darts";
         ArrayList<Stats> stats = null;
         int savedN = 0;

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package darts;
 
 import java.net.URL;
@@ -144,7 +139,6 @@ public class DartFXMLVieWController implements Initializable {
     
     
     DB db = new DB();
-    private final ObservableList<Stats> data = FXCollections.observableArrayList();
     Stats actualStat = new Stats();
     DBAvg avgTable = null;
     ArrayList<Integer> scoreList = new ArrayList<Integer>();
@@ -199,6 +193,11 @@ public class DartFXMLVieWController implements Initializable {
     private void handleButtonClear(ActionEvent event) {
         inputScore.clear();
     }
+    private void handleButton(String number) {
+        String txt = inputScore.getText();
+        inputScore.setText(txt+number);
+        inputScore.setAlignment(Pos.BASELINE_RIGHT);
+    }
     @FXML
     private void handleButtonScore(ActionEvent event) {
         try {
@@ -221,19 +220,19 @@ public class DartFXMLVieWController implements Initializable {
     }
     @FXML
     private void handleBtnLogin(ActionEvent event) {
-        System.out.println("dUserName Login "+inputUserName.getText());
-        avgTable = new DBAvg(inputUserName.getText());
+        ArrayList<String> userNames = db.getAllUserName();
         boolean newPlayer = true;
-        actualStat.setUserName(inputUserName.getText());
+        
         menuPane.setDisable(false);
         menuPane.setVisible(true);
         userPane.setDisable(true);
         userPane.setVisible(false);
+        actualStat.setUserName(inputUserName.getText());
         outputUserName.setText(actualStat.getUserName()+"!");
-        ArrayList<String> userNames = db.getAllUserName();
+        
+        avgTable = new DBAvg(inputUserName.getText());
         if (userNames == null ) {
            db.addStat(actualStat);
-           data.add(actualStat);
            return;
         }
         for (int i=0; i<userNames.size(); i++){
@@ -241,29 +240,27 @@ public class DartFXMLVieWController implements Initializable {
                 newPlayer = false;
         }
         if (newPlayer) {
-           db.addStat(actualStat);
-           data.add(actualStat);
-          
+           db.addStat(actualStat);       
         }
     }
     @FXML
     private void handleBtnStat(ActionEvent event) {
-        menuPane.setDisable(true);
-        menuPane.setVisible(false);
+        Stats showedStats = new Stats();
+        
         statPane.setDisable(false);
         statPane.setVisible(true);
-        Stats showedStats = new Stats();
+        menuPane.setDisable(true);
+        menuPane.setVisible(false);
+
         showedStats = db.getOwnStats(actualStat.getUserName());
-        System.out.println("kész");
-        if (Integer.valueOf(showedStats.getPlayedGames()) == 0){
+        if (showedStats.getPlayedGames().equals("0")){
             statAvg.setText("");
-            statPlayedGames.setText("");
             statCo.setText("");
             statHCo.setText("");
             statHScore.setText("");
+            statPlayedGames.setText("");
         }
-        else
-        {        
+        else{        
             double avg = avgTable.getAvarageSum(actualStat.getUserName())/Integer.valueOf(showedStats.getPlayedGames());
             statAvg.setText(String.valueOf(avg));
             statPlayedGames.setText(String.valueOf(showedStats.getPlayedGames()));
@@ -273,42 +270,35 @@ public class DartFXMLVieWController implements Initializable {
         }
     }
     @FXML
-    private void handleBtnBackTable(ActionEvent event) {;
-        menuPane.setDisable(false);
-        menuPane.setVisible(true);
-        allPlayerStatPane.setDisable(true);
-        allPlayerStatPane.setVisible(false);
-    }
-    @FXML
     private void handleBtnGame(ActionEvent event) {;
-        menuPane.setDisable(true);
-        menuPane.setVisible(false);
         scorePane.setDisable(false);
         scorePane.setVisible(true);
+        menuPane.setDisable(true);
+        menuPane.setVisible(false);
     }
     @FXML
     private void handleBtnExit(ActionEvent event) {
-        menuPane.setDisable(false);
-        menuPane.setVisible(true);
         statPane.setDisable(true);
         statPane.setVisible(false);
+        menuPane.setDisable(false);
+        menuPane.setVisible(true);
     }
     @FXML
     private void handleBtnBackfromScore(ActionEvent event) {
+        coHappened = false;
+        gameNumber = 0;
+        latestCo   = 0;
+        chekoutTry = 0;
+        
         menuPane.setDisable(false);
         menuPane.setVisible(true);
         scorePane.setDisable(true);
         scorePane.setVisible(false);
-        gameNumber = 0;
-        coHappened = false;
-        latestCo = 0;
-        chekoutTry = 0;
-        scoreList = new ArrayList<Integer>();
         outputRem.setText("501");
         outputHi.setText("");
         ouputLegAvg.setText("");
     }
-        @FXML
+    @FXML
     private void handleBtnUndo(ActionEvent event) {
         if (isSecondUndo) {
             alert("You can only undo one score");
@@ -338,31 +328,28 @@ public class DartFXMLVieWController implements Initializable {
         checkoutPane.setDisable(true);
         checkoutPane.setVisible(false);
     }
+    
     @FXML
     private void handleBtnAllPlayerStat(ActionEvent event) {
-        menuPane.setDisable(true);
-        menuPane.setVisible(false);
         allPlayerStatPane.setDisable(false);
         allPlayerStatPane.setVisible(true);
+        menuPane.setDisable(true);
+        menuPane.setVisible(false);
     }
+    
     @FXML
     private void handleButtonError(ActionEvent event) {
         errorPane.setVisible(false);
         scorePane.setOpacity(0);
     }
     
-    private void handleButton(String number) {
-        String txt = inputScore.getText();
-        inputScore.setText(txt+number);
-        inputScore.setAlignment(Pos.BASELINE_RIGHT);
-    }
      private void alert(String text) {
-        scorePane.setDisable(true);
-        scorePane.setOpacity(0.4);
-        
         Label label = new Label(text);
         Button alertButton = new Button("OK");
         VBox vbox = new VBox(label, alertButton);
+        
+        scorePane.setDisable(true);
+        scorePane.setOpacity(0.4);
         vbox.setAlignment(Pos.CENTER);
         
         alertButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -381,60 +368,49 @@ public class DartFXMLVieWController implements Initializable {
     
     @FXML
     private void updateStatToDB (){
-        db.updateStat(actualStat);
-        updateObservData();
-        setTableData();
+        gameNumber = 0;
+        
         menuPane.setDisable(false);
         menuPane.setVisible(true);
         scorePane.setDisable(true);
         scorePane.setVisible(false);
-        gameNumber = 0;
+        db.updateStat(actualStat);
     }
     
     @FXML
     private void clearStat (){
-        db.clearStat(actualStat.getUserName());
-        avgTable.clearAvg(actualStat.getUserName());
         menuPane.setDisable(false);
         menuPane.setVisible(true);
         statPane.setDisable(true);
-        statPane.setVisible(false);
+        statPane.setVisible(false);db.clearStat(actualStat.getUserName());
+        avgTable.clearAvg(actualStat.getUserName());
     }
     
-    public void updateObservData() {
-        String name = actualStat.getUserName();
-        for(int i=0; i<data.size(); i++){
-            if (name.equals(data.get(i).getUserName())){
-                //data.get(i).setAvg(Double.valueOf(actualStat.getAvg())); TODO
-                data.get(i).setHi(Integer.valueOf(actualStat.getHi()));
-                data.get(i).setHCo(Integer.valueOf(actualStat.getHCo()));
-                data.get(i).setChekoutTry(Integer.valueOf(actualStat.getChekoutTry()));
-                data.get(i).setPlayedGamesNumber(Integer.valueOf(actualStat.getPlayedGames()));
-            }    
-        }
-    }
     private void giveCheckOutNumber(){
         radio0.setToggleGroup(group);
         radio1.setToggleGroup(group);
         radio2.setToggleGroup(group);
         radio3.setToggleGroup(group);
         
-        scorePane.setDisable(true);
-        scorePane.setOpacity(0.1);
         checkoutPane.setOpacity(1);
         checkoutPane.setDisable(false);
         checkoutPane.setVisible(true);
+        scorePane.setDisable(true);
+        scorePane.setOpacity(0.1);
     }
         
     private void calculation(Integer actualScore, Integer remainingScore){
-        int hiScore = 0;
+        double avg[] = avarageCalculation(actualScore);
+        int hiScore  = 0;
+        int newScore = 0;
+        
         if((remainingScore-actualScore) < 2 && 
             !((remainingScore-actualScore) == 0) ){
             actualScore = 0;
             System.out.println("Túldobás");
         }
 
-        int newScore = remainingScore-actualScore;
+        newScore = remainingScore-actualScore;
         outputRem.setText(String.valueOf(newScore));
 
         if (actualStat.getHi() != "")
@@ -445,7 +421,7 @@ public class DartFXMLVieWController implements Initializable {
             outputHi.setText(String.valueOf(actualScore));
             actualStat.setHi(actualScore);
         }
-        double avg[] = avarageCalculation(actualScore);
+
         if (latestCo == 0) {
             ouputLegAvg.setText(String.valueOf(avg[0]));
             gameAvg.setText((String.valueOf(avg[1])));
@@ -469,10 +445,10 @@ public class DartFXMLVieWController implements Initializable {
         inputScore.clear();
     }
     private void checkOutHappened(double avg, int checkOutScore){
-        System.out.println("Leg avg: ="+avg);
         int hCo = 0;
+        gameNumber += 1;
+        coHappened = true;
         outputRem.setText("501");
-        System.out.println("avg: "+avg);
         avgTable.addAvg(avg, actualStat.getUserName());
         if (actualStat.getHCo() == "")
             hCo = 0;
@@ -481,63 +457,25 @@ public class DartFXMLVieWController implements Initializable {
         }
         outputHCo.setText(actualStat.getHCo());
         latestCo = scoreList.size();
-        gameNumber += 1;
-        coHappened = true;
     }
     
     private double[] avarageCalculation(Integer score){
         double [] avarages = new double[2];
-        int commonSum = 0;
-        int actualSum = 0;
+        int gameScoreSum = 0;
+        int actualLegSum = 0;
         scoreList.add(score);
+        
         for(int i=0; i<scoreList.size();i++){
-            commonSum += scoreList.get(i);
+            gameScoreSum += scoreList.get(i);
         }
-        System.out.println("Itt1");
-        if (latestCo>0){
-          for(int i=latestCo; i<scoreList.size();i++){
-            actualSum += scoreList.get(i);
+        if (latestCo > 0){
+            for(int i=latestCo; i<scoreList.size();i++){
+                actualLegSum += scoreList.get(i);
             }
-            avarages[1] = actualSum/(scoreList.size()-latestCo);
+            avarages[1] = actualLegSum/(scoreList.size()-latestCo);
         }
-         avarages[0] = commonSum/scoreList.size();
-         System.out.println("itt2");
+        avarages[0] = gameScoreSum/scoreList.size();
         return avarages;
-    }
-       public void setTableData() {
-        TableColumn NameCol = new TableColumn("Username");
-        NameCol.setMinWidth(100);
-        NameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        NameCol.setCellValueFactory(new PropertyValueFactory<Stats, String>("userName"));
- 
-        TableColumn AvgCol = new TableColumn("Avarage");
-        AvgCol.setMinWidth(50);
-        AvgCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        AvgCol.setCellValueFactory(new PropertyValueFactory<Stats, String>("Avg"));
-
-        TableColumn hScoreCol = new TableColumn("HScore");
-        hScoreCol.setMinWidth(50);
-        hScoreCol.setCellValueFactory(new PropertyValueFactory<Stats, String>("Hi"));
-        hScoreCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        
-        TableColumn hCheckoutCol = new TableColumn("HCo");
-        hCheckoutCol.setMinWidth(50);
-        hCheckoutCol.setCellValueFactory(new PropertyValueFactory<Stats, String>("HCo"));
-        hCheckoutCol.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        TableColumn chekoutTryCol = new TableColumn("C Try");
-        chekoutTryCol.setMinWidth(50);
-        chekoutTryCol.setCellValueFactory(new PropertyValueFactory<Stats, String>("chekoutTry"));
-        chekoutTryCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        
-        TableColumn gameNumberCol = new TableColumn("Game Number");
-        gameNumberCol.setMinWidth(50);
-        gameNumberCol.setCellValueFactory(new PropertyValueFactory<Stats, String>("playedGamesNumber"));
-        gameNumberCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        
-        table.getColumns().addAll(NameCol, AvgCol, hScoreCol, hCheckoutCol, chekoutTryCol, gameNumberCol); 
-        data.addAll(db.getAllStats()); 
-        table.setItems(data);
     }
 
     private void checkOutTable(Integer remainingScore){
@@ -704,13 +642,11 @@ public class DartFXMLVieWController implements Initializable {
                 case   3: labelCo.setText("1   D1");break;
                 case   2: labelCo.setText("D2");break;
                 default: labelCo.setText("");break;
-                    
         }            
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        setTableData();
     }    
     
 }
