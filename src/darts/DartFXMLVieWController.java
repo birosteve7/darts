@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -33,7 +34,6 @@ import javax.swing.ButtonGroup;
  */
 public class DartFXMLVieWController implements Initializable {
   
-    
     @FXML
     private Pane userPane;
     @FXML
@@ -126,6 +126,8 @@ public class DartFXMLVieWController implements Initializable {
     private Button btnStatReset;
     @FXML
     private TextField inputUserName;
+    @FXML
+    private PasswordField inputPassword;
     @FXML
     private Button btnLogin;
     @FXML
@@ -221,27 +223,32 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private void handleBtnLogin(ActionEvent event) {
         ArrayList<String> userNames = db.getAllUserName();
+        String actualUserName = inputUserName.getText();
+        String actualPassword = inputPassword.getText();
         boolean newPlayer = true;
         
+        for (int i=0; i<userNames.size(); i++){
+            if (actualUserName.equals(userNames.get(i))){
+                newPlayer = false;
+                break;
+            }    
+        }
+        if (newPlayer) {
+           db.addStat(actualUserName, actualPassword); 
+        }else{
+            String savedPassword = db.getUserPassword(actualUserName);
+            if(!actualPassword.equals(savedPassword)){
+                alert("Password is incorrect, please try again, or create a new user");
+                return;
+            }
+        }
+        avgTable = new DBAvg(actualUserName);
         menuPane.setDisable(false);
         menuPane.setVisible(true);
         userPane.setDisable(true);
         userPane.setVisible(false);
-        actualStat.setUserName(inputUserName.getText());
-        outputUserName.setText(actualStat.getUserName()+"!");
-        
-        avgTable = new DBAvg(inputUserName.getText());
-        if (userNames == null ) {
-           db.addStat(actualStat);
-           return;
-        }
-        for (int i=0; i<userNames.size(); i++){
-            if (actualStat.getUserName().equals(userNames.get(i)))
-                newPlayer = false;
-        }
-        if (newPlayer) {
-           db.addStat(actualStat);       
-        }
+        actualStat.setUserName(actualUserName);
+        outputUserName.setText(actualUserName+"!");
     }
     @FXML
     private void handleBtnStat(ActionEvent event) {
@@ -400,20 +407,19 @@ public class DartFXMLVieWController implements Initializable {
     }
         
     private void calculation(Integer actualScore, Integer remainingScore){
-        double avg[] = avarageCalculation(actualScore);
+        double avg[] = new double[2];
         int hiScore  = 0;
         int newScore = 0;
         
         if((remainingScore-actualScore) < 2 && 
             !((remainingScore-actualScore) == 0) ){
             actualScore = 0;
-            System.out.println("Túldobás");
         }
-
+        avg = avarageCalculation(actualScore);
         newScore = remainingScore-actualScore;
         outputRem.setText(String.valueOf(newScore));
 
-        if (actualStat.getHi() != "")
+        if (!actualStat.getHi().equals(""))
             hiScore = Integer.valueOf(actualStat.getHi());
         
         if (actualScore > hiScore){
@@ -444,7 +450,7 @@ public class DartFXMLVieWController implements Initializable {
         } 
         inputScore.clear();
     }
-    private void checkOutHappened(double avg, int checkOutScore){
+    public void checkOutHappened(double avg, int checkOutScore){
         int hCo = 0;
         gameNumber += 1;
         coHappened = true;
@@ -459,7 +465,7 @@ public class DartFXMLVieWController implements Initializable {
         latestCo = scoreList.size();
     }
     
-    private double[] avarageCalculation(Integer score){
+    public double[] avarageCalculation(Integer score){
         double [] avarages = new double[2];
         int gameScoreSum = 0;
         int actualLegSum = 0;
@@ -647,6 +653,5 @@ public class DartFXMLVieWController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    }    
-    
+    }
 }

@@ -2,8 +2,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -196,16 +196,22 @@
             <Line endX="-3.20001220703125" endY="264.0" layoutX="189.0" layoutY="103.0" startX="-4.0" startY="-4.0" />
          </children>
       </Pane>
-      <Pane id="userPane" fx:id="userPane" layoutX="37.0" layoutY="131.0" prefHeight="158.0" prefWidth="308.0" AnchorPane.bottomAnchor="191.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="131.0">
+      <Pane id="userPane" fx:id="userPane" layoutX="37.0" layoutY="126.0" prefHeight="188.0" prefWidth="308.0" AnchorPane.bottomAnchor="166.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="126.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#50a9cd" height="180.0" layoutX="-28.0" layoutY="-12.0" stroke="#bce324" strokeType="OUTSIDE" strokeWidth="5.0" width="358.0" />
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="4.0" prefHeight="75.0" prefWidth="296.0" text="Please give your player name:" textFill="#c8da51">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#50a9cd" height="221.0" layoutX="-33.0" layoutY="-17.0" stroke="#bce324" strokeType="OUTSIDE" strokeWidth="5.0" width="368.0" />
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="-33.0" prefHeight="95.0" prefWidth="296.0" text="Please give your user name" textFill="#c8da51">
                <font>
                   <Font size="19.0" />
                </font>
             </Label>
-            <TextField id="inputUserName" fx:id="inputUserName" layoutX="58.0" layoutY="69.0" prefHeight="40.0" prefWidth="192.0" />
-            <Button id="btnLogin" fx:id="btnLogin" layoutX="124.0" layoutY="123.0" mnemonicParsing="false" onAction="#handleBtnLogin" prefHeight="27.0" prefWidth="61.0" text="OK" />
+            <TextField id="inputUserName" fx:id="inputUserName" layoutX="58.0" layoutY="69.0" prefHeight="28.0" prefWidth="192.0" />
+            <PasswordField id="inputPassword" fx:id="inputPassword" layoutX="77.0" layoutY="106.0" />
+            <Button id="btnLogin" fx:id="btnLogin" layoutX="124.0" layoutY="147.0" mnemonicParsing="false" onAction="#handleBtnLogin" prefHeight="27.0" prefWidth="61.0" text="OK" />
+            <Label layoutX="94.0" layoutY="34.0" prefHeight="17.0" prefWidth="123.0" text="and password:" textFill="#c8da51">
+               <font>
+                  <Font size="19.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
     </children>

@@ -10,12 +10,14 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Stats {
     private SimpleStringProperty userName;
+    private SimpleStringProperty userPassword;
     private SimpleStringProperty Hi;
     private SimpleStringProperty HCo;
     private SimpleStringProperty chekoutTry;
     private SimpleStringProperty playedGamesNumber;
 
     public Stats() {
+        this.userPassword = new SimpleStringProperty("");
         this.userName = new SimpleStringProperty("");
         this.Hi = new SimpleStringProperty("");
         this.HCo = new SimpleStringProperty("");
@@ -23,7 +25,8 @@ public class Stats {
         this.playedGamesNumber = new SimpleStringProperty("");
     }
     
-    public Stats(String userName,int Hi, int HCo, int chekoutTry, int playedGamesNumber) {
+    public Stats(String userName, String password, int Hi, int HCo, int chekoutTry, int playedGamesNumber) {
+        this.userPassword = new SimpleStringProperty(password);
         this.userName = new SimpleStringProperty(userName);
         this.Hi = new SimpleStringProperty(String.valueOf(Hi));
         this.HCo = new SimpleStringProperty(String.valueOf(HCo));
@@ -38,6 +41,14 @@ public class Stats {
         this.playedGamesNumber =  new SimpleStringProperty(String.valueOf(playedGamesNumber));
     }
 
+    public String getUserPassword() {
+        return userPassword.get();
+    }
+
+    public void setUserPassword(String userName) {
+        this.userPassword.set(userName);
+    }
+    
     public String getUserName() {
         return userName.get();
     }
@@ -81,8 +92,4 @@ public class Stats {
     public double getchekoutPercentage(){
         return Integer.valueOf(playedGamesNumber.get())*100/Integer.valueOf(chekoutTry.get());
     }
-    
-  
-    
-    
 }

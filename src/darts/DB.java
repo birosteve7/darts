@@ -58,7 +58,7 @@ public class DB {
             ResultSet rs = dbmd.getTables(null, "APP", "DARTS", null);
             if(!rs.next())
             { 
-                createStatement.execute("create table darts( username varchar(10), avarage int, highestscore int, highestcheckout int, checkouttry int, playedgames int)");
+                createStatement.execute("create table darts( username varchar(10), userpassword varchar(12), highestscore int, highestcheckout int, checkouttry int, playedgames int)");
             }
         } catch (SQLException ex) {
             System.out.println("Valami baj van az adattáblák létrehozásakor.");
@@ -73,7 +73,7 @@ public class DB {
             ResultSet rs = createStatement.executeQuery(sql);
             stats = new ArrayList<Stats>();
             while(rs.next()){
-                Stats actualStat = new Stats( rs.getString("username"), rs.getInt("highestscore"), rs.getInt("highestcheckout"), 
+                Stats actualStat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestscore"), rs.getInt("highestcheckout"), 
                                               rs.getInt("checkouttry"), rs.getInt("playedgames"));
                 stats.add(actualStat);
             }
@@ -85,26 +85,34 @@ public class DB {
     }
     
     public Stats getOwnStats(String userName){
-        String sql = "select * from darts";
-        ArrayList<Stats> stats = null;
-        int savedN = 0;
+        String sql = "select * from darts where username='"+userName+"'";
+        Stats stat = null;
         try {
             ResultSet rs = createStatement.executeQuery(sql);
-            stats = new ArrayList<Stats>();
-            while(rs.next()){
-                Stats actualStat = new Stats( rs.getString("username"), rs.getInt("highestscore"), rs.getInt("highestcheckout"), 
-                                              rs.getInt("checkouttry"), rs.getInt("playedgames"));
-                stats.add(actualStat);
+            if (rs.next()) {
+            stat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestscore"), rs.getInt("highestcheckout"), 
+                              rs.getInt("checkouttry"), rs.getInt("playedgames"));
             }
         } catch (SQLException ex) {
             System.out.println("Valami baj van  a kiolvasáskor");
             System.out.println(""+ex);
         }
-        for (int i=0; i<stats.size();i++){
-           if (userName.equals(stats.get(i).getUserName()))
-               savedN = i;
-       }
-       return stats.get(savedN); 
+       return stat; 
+    }
+    
+        public String getUserPassword(String userName){
+        String sql = "select userpassword from darts where username='"+userName+"'";
+        String password = "";
+        try {
+            ResultSet rs = createStatement.executeQuery(sql);
+            if (rs.next()) {
+                password = rs.getString("userpassword");
+            }   
+        } catch (SQLException ex) {
+            System.out.println("Valami baj van  a kiolvasáskor");
+            System.out.println(""+ex);
+        }
+       return password; 
     }
     
     public ArrayList<String> getAllUserName(){
@@ -113,28 +121,26 @@ public class DB {
         try {
             ResultSet rs = createStatement.executeQuery(sql);
             while(rs.next()){
-                System.out.println("User: "+rs.getString("username"));
                 userNames.add( rs.getString("username"));
             }
         } catch (SQLException ex) {
             System.out.println("Valami baj van  a kiolvasáskor");
             System.out.println(""+ex);
         }
-        for (int i=0; i<userNames.size(); i++)
-            System.out.println("Username("+i+")= "+userNames.get(i));
         return userNames; 
     }
     
 
-    public void addStat(Stats stat){
+    public void addStat(String username, String password){
         try {
-            String sql = "insert into darts (username, highestscore, highestcheckout,checkouttry,playedgames) values (?,?,?,?,?)";
+            String sql = "insert into darts ( username, userpassword, highestscore, highestcheckout,checkouttry,playedgames) values (?,?,?,?,?,?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, stat.getUserName());
-            preparedStatement.setInt(2, 0);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
             preparedStatement.setInt(3, 0);
             preparedStatement.setInt(4, 0);
             preparedStatement.setInt(5, 0);
+            preparedStatement.setInt(6, 0);
             preparedStatement.execute();
         } catch (SQLException ex) {
             System.out.println("Valami baj van  a stat átadáskor");
@@ -172,8 +178,6 @@ public class DB {
             HCo = Integer.valueOf(oldStats.getHCo());
         int checkoutTry = Integer.valueOf(oldStats.getChekoutTry())+Integer.valueOf(newStats.getChekoutTry());
         int checkoutPercentage = Integer.valueOf(oldStats.getPlayedGames())+Integer.valueOf(newStats.getPlayedGames());
-        System.out.println("Try: "+checkoutTry);
-        System.out.println("Perc: "+checkoutPercentage);
         try {
             String sql = "update darts set highestscore = ?, highestcheckout = ?, checkouttry = ?, playedgames = ? where username=?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);

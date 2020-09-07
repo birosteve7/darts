@@ -56,11 +56,10 @@ public class DBAvg {
         }
         
         try {
-            ResultSet rs = dbmd.getTables(null, "APP",name, null);
+            ResultSet rs = dbmd.getTables(null, name,name, null);
             if(!rs.next())
             { 
-                String sql = "create table "+name+"( avarage float)";
-                System.out.println("sql: "+sql);
+                String sql = "create table "+name+" (avarage float)";
                 createStatement.execute(sql);
             }
         } catch (SQLException ex) {
@@ -70,7 +69,6 @@ public class DBAvg {
     }
     public Double getAvarageSum(String name){
         String sql = "select * from "+name+"";
-        System.out.println("sql: "+sql);
         double sum = 0;
         ArrayList<Double> avgs = new ArrayList<>();
         try {
@@ -91,7 +89,6 @@ public class DBAvg {
     public void addAvg(Double avg, String name){
         try {
             String sql = "insert into "+name+" (avarage) values (?)";
-            System.out.println("sql"+sql);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setDouble(1, avg);
             preparedStatement.execute();
@@ -104,7 +101,6 @@ public class DBAvg {
         public void clearAvg(String name){
         try {
             String sql = "delete from "+name+"";
-            System.out.println("sql"+sql);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.execute();
         } catch (SQLException ex) {
