@@ -28,7 +28,6 @@ public class DBAvg {
     
     
     public DBAvg(String name) {
-        //Megpróbáljuk életre kelteni
         try {
             conn = DriverManager.getConnection(URL);
             System.out.println("A AVG DB híd létrejött");
@@ -37,7 +36,6 @@ public class DBAvg {
             System.out.println(""+ex);
         }
         
-        //Ha életre kelt, csinálunk egy megpakolható teherautót
         if (conn != null){
             try {
                 createStatement = conn.createStatement();
@@ -47,7 +45,6 @@ public class DBAvg {
             }
         }
         
-        //Megnézzük, hogy üres-e az adatbázis? Megnézzük, létezik-e az adott adattábla.
         try {           
             dbmd = conn.getMetaData();
         } catch (SQLException ex) {
@@ -56,7 +53,8 @@ public class DBAvg {
         }
         
         try {
-            ResultSet rs = dbmd.getTables(null, name,name, null);
+            ResultSet rs = dbmd.getTables(null, name, name, null);
+            System.out.println("next="+rs.next());
             if(!rs.next())
             { 
                 String sql = "create table "+name+" (avarage float)";

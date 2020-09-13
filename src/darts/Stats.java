@@ -15,6 +15,7 @@ public class Stats {
     private SimpleStringProperty HCo;
     private SimpleStringProperty chekoutTry;
     private SimpleStringProperty playedGamesNumber;
+    private SimpleStringProperty usedDartsNumber;
 
     public Stats() {
         this.userPassword = new SimpleStringProperty("");
@@ -23,22 +24,25 @@ public class Stats {
         this.HCo = new SimpleStringProperty("");
         this.chekoutTry = new SimpleStringProperty("");
         this.playedGamesNumber = new SimpleStringProperty("");
+        this.usedDartsNumber = new SimpleStringProperty("");
     }
     
-    public Stats(String userName, String password, int Hi, int HCo, int chekoutTry, int playedGamesNumber) {
+    public Stats(String userName, String password, int Hi, int HCo, int chekoutTry, int playedGamesNumber, int usedDartsNumber) {
         this.userPassword = new SimpleStringProperty(password);
         this.userName = new SimpleStringProperty(userName);
         this.Hi = new SimpleStringProperty(String.valueOf(Hi));
         this.HCo = new SimpleStringProperty(String.valueOf(HCo));
         this.chekoutTry = new SimpleStringProperty(String.valueOf(chekoutTry));
         this.playedGamesNumber =  new SimpleStringProperty(String.valueOf(playedGamesNumber));
+        this.usedDartsNumber = new SimpleStringProperty(String.valueOf(usedDartsNumber));
     }
     
-    public Stats(int Hi, int HCo, int chekoutTry, int playedGamesNumber) {
+    public Stats(int Hi, int HCo, int chekoutTry, int playedGamesNumber, int usedDartsNumber) {
         this.Hi = new SimpleStringProperty(String.valueOf(Hi));
         this.HCo = new SimpleStringProperty(String.valueOf(HCo));
         this.chekoutTry = new SimpleStringProperty(String.valueOf(chekoutTry));
         this.playedGamesNumber =  new SimpleStringProperty(String.valueOf(playedGamesNumber));
+        this.usedDartsNumber = new SimpleStringProperty(String.valueOf(usedDartsNumber));
     }
 
     public String getUserPassword() {
@@ -91,5 +95,18 @@ public class Stats {
     
     public double getchekoutPercentage(){
         return Integer.valueOf(playedGamesNumber.get())*100/Integer.valueOf(chekoutTry.get());
+    }
+    
+    public void setUsedDartsNumber(int usedDarts) {
+        this.usedDartsNumber.set(String.valueOf(usedDarts));
+    }
+    public String getUsedDartsNumber() {
+        return usedDartsNumber.get();
+    }
+ 
+    public double getAvarage(){
+        System.out.println("Played games: "+this.getPlayedGames());
+        System.out.println("Dart: "+this.getUsedDartsNumber());
+        return (Integer.valueOf(this.getPlayedGames())*501)/(double)(Integer.valueOf(this.getUsedDartsNumber())/3.0);
     }
 }
