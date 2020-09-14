@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
@@ -126,14 +127,6 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private Label statPlayedGames;
     @FXML
-    private Label statAvg;
-    @FXML
-    private Label statHCo;
-    @FXML
-    private Label statHScore;
-    @FXML
-    private Label statCo;
-    @FXML
     private Button btnStatExit;
     @FXML
     private Button btnStatReset;
@@ -173,6 +166,10 @@ public class DartFXMLVieWController implements Initializable {
     private PasswordField inputNewPassword1;
     @FXML
     private Button btnSingUp;
+    @FXML
+    private ListView statNameList;
+    @FXML
+    private ListView statList;
     
     
     DB db = new DB();
@@ -286,23 +283,8 @@ public class DartFXMLVieWController implements Initializable {
     }
     @FXML
     private void handleBtnStat(ActionEvent event) {
-        Stats showedStats = new Stats();
         paneChange(menuPane,statPane);
-
-        showedStats = db.getOwnStats(actualStat.getUserName());
-        if (showedStats.getPlayedGames().equals("0")){
-            statAvg.setText("");
-            statCo.setText("");
-            statHCo.setText("");
-            statHScore.setText("");
-            statPlayedGames.setText("");
-        }
-        else{        
-            setLabelValue(statAvg, String.valueOf(showedStats.getAvarage()));
-            setLabelValue(statPlayedGames, showedStats.getPlayedGames());
-            setLabelValue(statCo, String.valueOf(Integer.valueOf(showedStats.getPlayedGames())*100/Integer.valueOf(showedStats.getChekoutTry())));
-            setLabelValue(statHCo, showedStats.getHCo());
-        }
+        statNameListAddition(inputUserName.getText());
     }
     @FXML
     private void handleBtnGame(ActionEvent event) {
@@ -345,6 +327,8 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private void handleBtnExit(ActionEvent event) {
         paneChange(statPane,menuPane);
+        statNameList.getItems().clear();
+        statList.getItems().clear();
     }
     @FXML
     private void handleBtnBackfromScore(ActionEvent event) {
@@ -455,7 +439,7 @@ public class DartFXMLVieWController implements Initializable {
     
     @FXML
     private void updateStatToDB (){
-        if(actualStat.getPlayedGames().equals("") || !outputRem.getText().equals("501")) {
+        if(actualStat.getPlayedGames() == 0 || !outputRem.getText().equals("501")) {
             alert("You cannont save the statistic yet");
             return;
         }
@@ -468,11 +452,47 @@ public class DartFXMLVieWController implements Initializable {
     
     @FXML
     private void clearStat (){
-        paneChange(statPane,menuPane);
         db.clearStat(actualStat.getUserName());
         actualStat = db.getOwnStats(actualStat.getUserName());
+        statNameList.getItems().clear();
+        statList.getItems().clear();
+        paneChange(statPane,menuPane);
     }
-    
+    @FXML
+    private void statNameListAddition(String userName) {
+        Stats showedStat = db.getOwnStats(userName);
+        statNameList.getItems().add("Played Game:");
+        statNameList.getItems().add("Avarage:");
+        statNameList.getItems().add("Checkout % :");
+        statNameList.getItems().add("Highest checkout: ");
+        statNameList.getItems().add("20-:");
+        statNameList.getItems().add("20+");
+        statNameList.getItems().add("40+");
+        statNameList.getItems().add("60+");
+        statNameList.getItems().add("80+");
+        statNameList.getItems().add("100+");
+        statNameList.getItems().add("120+");
+        statNameList.getItems().add("140+");
+        statNameList.getItems().add("160+");
+        statNameList.getItems().add("180");
+       
+        System.out.println("Neme:"+userName);
+        statList.getItems().add(showedStat.getPlayedGames());
+        statList.getItems().add(showedStat.getAvarage());
+        statList.getItems().add(showedStat.getchekoutPercentage());
+        statList.getItems().add(showedStat.getHCo());
+        statList.getItems().add(showedStat.getBelow20());
+        statList.getItems().add(showedStat.getAbove20());
+        statList.getItems().add(showedStat.getAbove40());
+        statList.getItems().add(showedStat.getAbove60());
+        statList.getItems().add(showedStat.getAbove80());
+        statList.getItems().add(showedStat.getAbove100());
+        statList.getItems().add(showedStat.getAbove120());
+        statList.getItems().add(showedStat.getAbove140());
+        statList.getItems().add(showedStat.getAbove160());
+        statList.getItems().add(showedStat.getP180());
+    }
+
     private void giveCheckOutNumber(Boolean checkOutHappend){
         radio0.setToggleGroup(group);
         radio1.setToggleGroup(group);
@@ -503,6 +523,7 @@ public class DartFXMLVieWController implements Initializable {
             !((remainingScore-actualScore) == 0) ){
             actualScore = 0;
         }
+        setRange(actualScore);
         avg = avarageCalculation(actualScore);
         newScore = remainingScore-actualScore;
         setLabelValue(outputRem, String.valueOf(newScore));
@@ -532,7 +553,7 @@ public class DartFXMLVieWController implements Initializable {
         if (checkOutScore >= Integer.valueOf(actualStat.getHCo())) {
             actualStat.setHCo(checkOutScore);
         }
-        setLabelValue(outputHCo,actualStat.getHCo());
+        setLabelValue(outputHCo,String.valueOf(actualStat.getHCo()));
         latestCo = scoreList.size();
     }
     
@@ -742,7 +763,53 @@ public class DartFXMLVieWController implements Initializable {
         actualStat.setChekoutTry(0);
         actualStat.setUserName(name);
     }
+    
+    public void setRange(int score){
+        if (score < 20) {
+            actualStat.setBelow20();
+            System.out.println("20-");
+        }
+        if (score < 40 && score >= 20) {
+            actualStat.setAbove20();
+            System.out.println("20+");
+        }    
+        if (score < 60 && score >= 40) {
+            actualStat.setAbove40();
+            System.out.println("40+");
+        }
+        if (score < 80 && score >= 60) {
+            actualStat.setAbove60();
+            System.out.println("60+");
+        }
+        if (score < 100 && score >= 80) {
+            actualStat.setAbove80();
+            System.out.println("80+");
+        }    
+        if (score < 120 && score >= 100) {
+            actualStat.setAbove100();
+            System.out.println("100+");
+        }
+        if (score < 140 && score >= 120) {
+            actualStat.setAbove120();
+            System.out.println("120+");
+        }
+        if (score < 160 && score >= 140) {
+            actualStat.setAbove140();
+            System.out.println("140+");
+        }
+        if (score < 180 && score >=160) {
+            actualStat.setAbove160();
+            System.out.println("160+");
+        }
+        if (score == 180) {
+            actualStat.setP180();
+            System.out.println("180!!!!!");
+        }
+    }
+   
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
     }
 }
