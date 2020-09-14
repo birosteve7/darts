@@ -17,7 +17,8 @@ public class Darts extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("DartFXMLVieW.fxml"));
         Scene scene = new Scene(root);
         
-        stage.setWidth(390);
+        stage.setResizable(false);
+        stage.setWidth(383);
         stage.setHeight(530);
         stage.setScene(scene);
         stage.show();

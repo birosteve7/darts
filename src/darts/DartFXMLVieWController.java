@@ -2,6 +2,7 @@ package darts;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -49,7 +50,11 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private Pane errorPane;
     @FXML
+    private Pane passwordPane;
+    @FXML
     private Pane allPlayerStatPane;
+    @FXML 
+    private Pane checkoutHappenedPane;
     @FXML
     private Label errorText;
     @FXML
@@ -111,6 +116,14 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private RadioButton radio3;
     @FXML
+    private RadioButton checkout0;
+    @FXML
+    private RadioButton checkout1;
+    @FXML
+    private RadioButton checkout2;
+    @FXML
+    private RadioButton checkout3;
+    @FXML
     private Label statPlayedGames;
     @FXML
     private Label statAvg;
@@ -129,7 +142,21 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private PasswordField inputPassword;
     @FXML
+    private PasswordField currentPassword;
+    @FXML
+    private PasswordField newPassword1;
+    @FXML
+    private PasswordField newPassword2;
+    @FXML
     private Button btnLogin;
+    @FXML
+    private Button cancelNewPasswordBtn;
+    @FXML
+    private Button saveNewPasswordBtn;
+    @FXML
+    private Button changePasswordBtn;
+    @FXML
+    private Button logOutBtn;
     @FXML
     private Label outputUserName;
     @FXML
@@ -138,19 +165,26 @@ public class DartFXMLVieWController implements Initializable {
     private Button btnBackTable;
     @FXML
     private Button btnBackfromScore;
+    @FXML
+    private TextField inputNewUserName;
+    @FXML
+    private PasswordField inputNewPassword;
+    @FXML
+    private PasswordField inputNewPassword1;
+    @FXML
+    private Button btnSingUp;
     
     
     DB db = new DB();
     Stats actualStat = new Stats();
-    DBAvg avgTable = null;
     ArrayList<Integer> scoreList = new ArrayList<Integer>();
     ToggleGroup group = new ToggleGroup();
+    ToggleGroup usedDartsGroup = new ToggleGroup();
     boolean coHappened = false;
     boolean isSecondUndo = false;
-    String latestHi="";
     int latestCo = 0;
     int chekoutTry = 0;
-    int gameNumber = 0;
+    
     @FXML
     private void handleButtonOne(ActionEvent event) {
         handleButton("1");
@@ -195,11 +229,137 @@ public class DartFXMLVieWController implements Initializable {
     private void handleButtonClear(ActionEvent event) {
         inputScore.clear();
     }
+    
     private void handleButton(String number) {
         String txt = inputScore.getText();
         inputScore.setText(txt+number);
         inputScore.setAlignment(Pos.BASELINE_RIGHT);
     }
+
+    @FXML
+    private void handleBtnLogin(ActionEvent event) {
+        ArrayList<String> userNames = db.getAllUserName();
+        String actualUserName = inputUserName.getText();
+        String actualPassword = inputPassword.getText();
+        boolean playerFound = false;
+        
+        for (int i=0; i<userNames.size(); i++){
+            if (actualUserName.equals(userNames.get(i))){
+                String savedPassword = db.getUserPassword(actualUserName);
+                if(actualPassword.equals(savedPassword)){
+                    paneChange(userPane,menuPane);
+                    //db.getOwnStats(actualUserName);
+                    initActualStat(actualUserName);
+                    outputUserName.setText(actualUserName+"!");
+                    return;
+                }
+            }
+        }
+        alert("Your username or password are incorrect!");
+        inputPassword.clear();
+        return;
+        
+    }
+    @FXML
+    private void handleSingUpBtn(ActionEvent event) {
+        ArrayList<String> userNames = db.getAllUserName();
+        String UserName = inputNewUserName.getText();
+        String Password = inputNewPassword.getText();
+        String repPassword = inputNewPassword1.getText();
+        for (int i=0; i<userNames.size(); i++){
+            if (UserName.equals(userNames.get(i))){
+                alert("Name is in use, please chose another");
+                return;
+            }
+        }
+        if (!Password.equals(repPassword)) {
+            alert("Your passwords don't match");
+            return;
+        }
+        db.addStat(UserName, Password);   
+        alert("Your account created. Plese log in");
+        inputNewUserName.clear();
+        inputNewPassword.clear();
+        inputNewPassword1.clear();
+        clearStatData();
+        return;
+    }
+    @FXML
+    private void handleBtnStat(ActionEvent event) {
+        Stats showedStats = new Stats();
+        paneChange(menuPane,statPane);
+
+        showedStats = db.getOwnStats(actualStat.getUserName());
+        if (showedStats.getPlayedGames().equals("0")){
+            statAvg.setText("");
+            statCo.setText("");
+            statHCo.setText("");
+            statHScore.setText("");
+            statPlayedGames.setText("");
+        }
+        else{        
+            setLabelValue(statAvg, String.valueOf(showedStats.getAvarage()));
+            setLabelValue(statPlayedGames, showedStats.getPlayedGames());
+            setLabelValue(statCo, String.valueOf(Integer.valueOf(showedStats.getPlayedGames())*100/Integer.valueOf(showedStats.getChekoutTry())));
+            setLabelValue(statHCo, showedStats.getHCo());
+        }
+    }
+    @FXML
+    private void handleBtnGame(ActionEvent event) {
+        //actualStat = db.getOwnStats(actualStat.getUserName());
+        paneChange(menuPane,scorePane);
+    }
+    @FXML
+    private void handleChangePasswordBtn(ActionEvent event) {
+        paneChange(menuPane,passwordPane);
+    }
+    @FXML
+    private void handleCancelNewPasswordBtn(ActionEvent event) {
+        paneChange(passwordPane, menuPane);
+    }
+    @FXML
+    private void handleLogOutBtn(ActionEvent event) {
+        paneChange(menuPane, userPane);
+        inputPassword.clear();
+        inputUserName.clear();
+        inputNewUserName.clear();
+        inputNewPassword.clear();
+        inputNewPassword1.clear();
+    }
+    @FXML
+    private void handleSaveNewPasswordBtn(ActionEvent event) {
+        String savedPassword = db.getUserPassword(actualStat.getUserName());
+        
+        if (!currentPassword.getText().equals(savedPassword)) {
+            alert("The given password don't match with the saved one");
+            return;
+        }
+        if (!newPassword1.getText().equals(newPassword2.getText())) {
+            alert("The new password dooesn't match");
+            return;
+        }
+        
+        db.saveNewPassword(actualStat.getUserName(),newPassword1.getText());
+        paneChange(passwordPane, menuPane);
+    }
+    @FXML
+    private void handleBtnExit(ActionEvent event) {
+        paneChange(statPane,menuPane);
+    }
+    @FXML
+    private void handleBtnBackfromScore(ActionEvent event) {
+        coHappened = false;
+        latestCo   = 0;
+        chekoutTry = 0;
+        paneChange(scorePane,menuPane);
+        setLabelValue(outputRem, "501");
+        setLabelValue(outputHi, "");
+        setLabelValue(ouputLegAvg, "");
+        setLabelValue(outputHCo, "");
+        setLabelValue(outputDouble, "");
+        setLabelValue(gameAvg, "");
+    }
+    
     @FXML
     private void handleButtonScore(ActionEvent event) {
         try {
@@ -219,129 +379,49 @@ public class DartFXMLVieWController implements Initializable {
         }
         calculation(actualScore,remainingScore);
         isSecondUndo = false;
+        System.err.println("Played gamesd: "+actualStat.getPlayedGames());
     }
-    @FXML
-    private void handleBtnLogin(ActionEvent event) {
-        ArrayList<String> userNames = db.getAllUserName();
-        String actualUserName = inputUserName.getText();
-        String actualPassword = inputPassword.getText();
-        boolean newPlayer = true;
-        
-        for (int i=0; i<userNames.size(); i++){
-            if (actualUserName.equals(userNames.get(i))){
-                newPlayer = false;
-                break;
-            }    
-        }
-        if (newPlayer) {
-           db.addStat(actualUserName, actualPassword); 
-        }else{
-            String savedPassword = db.getUserPassword(actualUserName);
-            if(!actualPassword.equals(savedPassword)){
-                alert("Password is incorrect, please try again, or create a new user");
-                return;
-            }
-        }
-        avgTable = new DBAvg(actualUserName);
-        menuPane.setDisable(false);
-        menuPane.setVisible(true);
-        userPane.setDisable(true);
-        userPane.setVisible(false);
-        actualStat.setUserName(actualUserName);
-        outputUserName.setText(actualUserName+"!");
-    }
-    @FXML
-    private void handleBtnStat(ActionEvent event) {
-        Stats showedStats = new Stats();
-        
-        statPane.setDisable(false);
-        statPane.setVisible(true);
-        menuPane.setDisable(true);
-        menuPane.setVisible(false);
-
-        showedStats = db.getOwnStats(actualStat.getUserName());
-        if (showedStats.getPlayedGames().equals("0")){
-            statAvg.setText("");
-            statCo.setText("");
-            statHCo.setText("");
-            statHScore.setText("");
-            statPlayedGames.setText("");
-        }
-        else{        
-            double avg = avgTable.getAvarageSum(actualStat.getUserName())/Integer.valueOf(showedStats.getPlayedGames());
-            statAvg.setText(String.valueOf(avg));
-            statPlayedGames.setText(String.valueOf(showedStats.getPlayedGames()));
-            statCo.setText(String.valueOf(Integer.valueOf(showedStats.getPlayedGames())*100/Integer.valueOf(showedStats.getChekoutTry())));
-            statHCo.setText(String.valueOf(showedStats.getHCo()));
-            statHScore.setText(String.valueOf(showedStats.getHi()));
-        }
-    }
-    @FXML
-    private void handleBtnGame(ActionEvent event) {;
-        scorePane.setDisable(false);
-        scorePane.setVisible(true);
-        menuPane.setDisable(true);
-        menuPane.setVisible(false);
-    }
-    @FXML
-    private void handleBtnExit(ActionEvent event) {
-        statPane.setDisable(true);
-        statPane.setVisible(false);
-        menuPane.setDisable(false);
-        menuPane.setVisible(true);
-    }
-    @FXML
-    private void handleBtnBackfromScore(ActionEvent event) {
-        coHappened = false;
-        gameNumber = 0;
-        latestCo   = 0;
-        chekoutTry = 0;
-        
-        menuPane.setDisable(false);
-        menuPane.setVisible(true);
-        scorePane.setDisable(true);
-        scorePane.setVisible(false);
-        outputRem.setText("501");
-        outputHi.setText("");
-        ouputLegAvg.setText("");
-    }
+    
     @FXML
     private void handleBtnUndo(ActionEvent event) {
+        int size = scoreList.size(); 
         if (isSecondUndo) {
-            alert("You can only undo one score");
+            alert("You can only use once the 'Undo' button");
             return;
-        }    
-        int deletedScore = scoreList.get(scoreList.size()-1);
+        }
+        if(size == 0) {
+            alert("There is nothing to undo");
+            return;
+        }
+        int deletedScore = scoreList.get(size-1);
         Integer.valueOf(outputRem.getText());
-        outputRem.setText(String.valueOf(Integer.valueOf(outputRem.getText())+deletedScore));
-        scoreList.remove(scoreList.size()-1);
+        setLabelValue(outputRem, String.valueOf(Integer.valueOf(outputRem.getText())+deletedScore));
+        scoreList.remove(size-1);
+        actualStat.setUsedDartsNumber(Integer.valueOf(actualStat.getUsedDartsNumber())-3);
         isSecondUndo = true;
-        outputHi.setText(latestHi);
+        setLabelValue(outputHi, String.valueOf(Collections.max(scoreList)));
     }
     
     @FXML
     private void handleCheckout(ActionEvent event) {
-        int checkoutNumber = Integer.valueOf(group.getSelectedToggle().toString().substring(group.getSelectedToggle().toString().length()-2, group.getSelectedToggle().toString().length()-1));
+        int dartNumber = 0;
+        int checkoutNumber = Integer.valueOf(group.getSelectedToggle().toString().substring(group.getSelectedToggle().toString().length()-2, 
+                                             group.getSelectedToggle().toString().length()-1));
         chekoutTry+=checkoutNumber;
         if (coHappened) {
+            actualStat.setPlayedGamesNumber(Integer.valueOf(actualStat.getPlayedGames())+1);
+            dartNumber = Integer.valueOf(usedDartsGroup.getSelectedToggle().toString().substring(usedDartsGroup.getSelectedToggle().toString().length()-2, 
+                                         usedDartsGroup.getSelectedToggle().toString().length()-1));
+            actualStat.setUsedDartsNumber(Integer.valueOf(actualStat.getUsedDartsNumber())+dartNumber);
             actualStat.setChekoutTry(chekoutTry);
-            actualStat.setPlayedGamesNumber(gameNumber);
             outputDouble.setText(String.valueOf(actualStat.getchekoutPercentage()));
+            setLabelValue(gameAvg, String.valueOf(actualStat.getAvarage()));
+            setLabelValue(ouputLegAvg, "");
             coHappened = false;
-        }    
-        scorePane.setDisable(false);
-        scorePane.setOpacity(1);
-        checkoutPane.setOpacity(0);
-        checkoutPane.setDisable(true);
-        checkoutPane.setVisible(false);
-    }
-    
-    @FXML
-    private void handleBtnAllPlayerStat(ActionEvent event) {
-        allPlayerStatPane.setDisable(false);
-        allPlayerStatPane.setVisible(true);
-        menuPane.setDisable(true);
-        menuPane.setVisible(false);
+            inputScore.clear();
+            scoreList.clear();
+        }
+        paneChange(checkoutPane, scorePane);
     }
     
     @FXML
@@ -375,40 +455,48 @@ public class DartFXMLVieWController implements Initializable {
     
     @FXML
     private void updateStatToDB (){
-        gameNumber = 0;
-        
-        menuPane.setDisable(false);
-        menuPane.setVisible(true);
-        scorePane.setDisable(true);
-        scorePane.setVisible(false);
+        if(actualStat.getPlayedGames().equals("") || !outputRem.getText().equals("501")) {
+            alert("You cannont save the statistic yet");
+            return;
+        }
+        System.out.println("played games: "+actualStat.getPlayedGames());
         db.updateStat(actualStat);
+        actualStat.setPlayedGamesNumber(0);
+        actualStat.setUsedDartsNumber(0);
+        paneChange(scorePane,menuPane);
     }
     
     @FXML
     private void clearStat (){
-        menuPane.setDisable(false);
-        menuPane.setVisible(true);
-        statPane.setDisable(true);
-        statPane.setVisible(false);db.clearStat(actualStat.getUserName());
-        avgTable.clearAvg(actualStat.getUserName());
+        paneChange(statPane,menuPane);
+        db.clearStat(actualStat.getUserName());
+        actualStat = db.getOwnStats(actualStat.getUserName());
     }
     
-    private void giveCheckOutNumber(){
+    private void giveCheckOutNumber(Boolean checkOutHappend){
         radio0.setToggleGroup(group);
         radio1.setToggleGroup(group);
         radio2.setToggleGroup(group);
         radio3.setToggleGroup(group);
         
-        checkoutPane.setOpacity(1);
-        checkoutPane.setDisable(false);
-        checkoutPane.setVisible(true);
-        scorePane.setDisable(true);
-        scorePane.setOpacity(0.1);
+        checkout0.setToggleGroup(usedDartsGroup);
+        checkout1.setToggleGroup(usedDartsGroup);
+        checkout2.setToggleGroup(usedDartsGroup);
+        checkout3.setToggleGroup(usedDartsGroup);
+        if (checkOutHappend){
+            checkoutHappenedPane.setVisible(true);
+            checkoutHappenedPane.setDisable(false);
+        }
+        else
+        {
+            checkoutHappenedPane.setVisible(false);
+            checkoutHappenedPane.setDisable(true);
+        }    
+        paneChange(scorePane,checkoutPane);
     }
-        
+
     private void calculation(Integer actualScore, Integer remainingScore){
-        double avg[] = new double[2];
-        int hiScore  = 0;
+        double avg = 0;
         int newScore = 0;
         
         if((remainingScore-actualScore) < 2 && 
@@ -417,240 +505,243 @@ public class DartFXMLVieWController implements Initializable {
         }
         avg = avarageCalculation(actualScore);
         newScore = remainingScore-actualScore;
-        outputRem.setText(String.valueOf(newScore));
-
-        if (!actualStat.getHi().equals(""))
-            hiScore = Integer.valueOf(actualStat.getHi());
-        
-        if (actualScore > hiScore){
-            latestHi = outputHi.getText();
-            outputHi.setText(String.valueOf(actualScore));
-            actualStat.setHi(actualScore);
-        }
-
-        if (latestCo == 0) {
-            ouputLegAvg.setText(String.valueOf(avg[0]));
-            gameAvg.setText((String.valueOf(avg[1])));
-        }else{
-            ouputLegAvg.setText(String.valueOf(avg[1]));
-            gameAvg.setText((String.valueOf(avg[0])));
-        }
+        setLabelValue(outputRem, String.valueOf(newScore));
+        setLabelValue(outputHi, String.valueOf(Collections.max(scoreList)));
+        setLabelValue(ouputLegAvg, String.valueOf(avg));
         
         if (newScore <= 170)
             checkOutTable(newScore);
         
-        if (newScore <= 50){
-            giveCheckOutNumber();
-        }
         if (newScore == 0){
-            if (latestCo == 0) 
-                checkOutHappened(avg[0], actualScore);
-            else 
-                checkOutHappened(avg[1], actualScore);
-        } 
+            checkOutHappened(avg, actualScore);
+            return;
+        }
+        
+        if (newScore <= 50 ){
+            giveCheckOutNumber(false);
+        }
+
+        actualStat.setUsedDartsNumber(Integer.valueOf(actualStat.getUsedDartsNumber())+3);
+        System.out.println("dart Number: "+actualStat.getUsedDartsNumber());
         inputScore.clear();
     }
     public void checkOutHappened(double avg, int checkOutScore){
-        int hCo = 0;
-        gameNumber += 1;
         coHappened = true;
-        outputRem.setText("501");
-        avgTable.addAvg(avg, actualStat.getUserName());
-        if (actualStat.getHCo() == "")
-            hCo = 0;
-        if (checkOutScore >= Integer.valueOf(hCo)) {
+        setLabelValue(outputRem, "501");
+        giveCheckOutNumber(true);
+        if (checkOutScore >= Integer.valueOf(actualStat.getHCo())) {
             actualStat.setHCo(checkOutScore);
         }
-        outputHCo.setText(actualStat.getHCo());
+        setLabelValue(outputHCo,actualStat.getHCo());
         latestCo = scoreList.size();
     }
     
-    public double[] avarageCalculation(Integer score){
-        double [] avarages = new double[2];
-        int gameScoreSum = 0;
+    public double avarageCalculation(Integer score){
+        double avarages  = 0;
         int actualLegSum = 0;
         scoreList.add(score);
         
         for(int i=0; i<scoreList.size();i++){
-            gameScoreSum += scoreList.get(i);
+            actualLegSum += scoreList.get(i);
         }
-        if (latestCo > 0){
-            for(int i=latestCo; i<scoreList.size();i++){
-                actualLegSum += scoreList.get(i);
-            }
-            avarages[1] = actualLegSum/(scoreList.size()-latestCo);
-        }
-        avarages[0] = gameScoreSum/scoreList.size();
+        avarages = actualLegSum/scoreList.size();
         return avarages;
     }
 
-    private void checkOutTable(Integer remainingScore){
+    public void checkOutTable(Integer remainingScore){
         switch (remainingScore){
-                case 170: labelCo.setText("T20   T20   Bull");break;
-                case 167: labelCo.setText("T20   T19   Bull");break;
-                case 164: labelCo.setText("T20   T18   Bull");break;
-                case 161: labelCo.setText("T20   T17   Bull");break;
-                case 160: labelCo.setText("T20   T20   D20");break;
-                case 158: labelCo.setText("T20   T20   D19");break;
-                case 156: labelCo.setText("T20   T20   D18");break;
-                case 155: labelCo.setText("T20   T15   Bull");break;
-                case 154: labelCo.setText("T20   T18   D20");break;
-                case 153: labelCo.setText("T20   T19   D18");break;
-                case 152: labelCo.setText("T20   T20   D16");break;
-                case 151: labelCo.setText("T20   T17   D20");break;
-                case 150: labelCo.setText("T20   T18   D18");break;
-                case 149: labelCo.setText("T20   T19   D16");break;
-                case 148: labelCo.setText("T20   T16   D20");break;
-                case 147: labelCo.setText("T20   T17   D18");break;
-                case 146: labelCo.setText("T20   T18   D16");break;
-                case 145: labelCo.setText("T20   T15   D20");break;
-                case 144: labelCo.setText("T20   T20   D12");break;
-                case 143: labelCo.setText("T20   T17   D16");break;
-                case 142: labelCo.setText("T20   T14   D20");break;
-                case 141: labelCo.setText("T20   T15   D18");break;
-                case 140: labelCo.setText("T20   T20   D10");break;
-                case 139: labelCo.setText("T20   T13   D20");break;
-                case 138: labelCo.setText("T20   T14   D18");break;
-                case 137: labelCo.setText("T17   T18   D16");break;
-                case 136: labelCo.setText("T20   T20   D8");break;
-                case 135: labelCo.setText("T20   T15   D15");break;
-                case 134: labelCo.setText("T20   T14   D16");break;
-                case 133: labelCo.setText("T20   T19   D8");break;
-                case 132: labelCo.setText("T20   T20   D6");break;
-                case 131: labelCo.setText("T20   T13   D16");break;
-                case 130: labelCo.setText("T20   T18   D8");break;
-                case 129: labelCo.setText("T19   T20   D6");break;
-                case 128: labelCo.setText("T18   T14   D16");break;
-                case 127: labelCo.setText("T19   T18   D8");break;
-                case 126: labelCo.setText("T19   T19   D6");break;
-                case 125: labelCo.setText("BULL  T20   D20");break;
-                case 124: labelCo.setText("T20   T16   D16");break;
-                case 123: labelCo.setText("T19   T16   D9");break;
-                case 122: labelCo.setText("T18   T20   D4");break;
-                case 121: labelCo.setText("T20   T15   D8");break;
-                case 120: labelCo.setText("T20    20   D20");break;
-                case 119: labelCo.setText("T20   19   D20");break;
-                case 118: labelCo.setText("T20   18   D20");break;
-                case 117: labelCo.setText("T20   17   D20");break;
-                case 116: labelCo.setText("T20   16   D20");break;
-                case 115: labelCo.setText("T20   15   D20");break;
-                case 114: labelCo.setText("T20   14   D20");break;
-                case 113: labelCo.setText("T20   13   D20");break;
-                case 112: labelCo.setText("T20   20   D16");break;
-                case 111: labelCo.setText("T20   19   D16");break;
-                case 110: labelCo.setText("T20   18   D16");break;
-                case 109: labelCo.setText("T20   17   D16");break;
-                case 108: labelCo.setText("T20   16   D16");break;
-                case 107: labelCo.setText("T19   18   D16");break;
-                case 106: labelCo.setText("T20   14   D16");break;
-                case 105: labelCo.setText("T20   13   D16");break;
-                case 104: labelCo.setText("T18   18   D16");break;
-                case 103: labelCo.setText("T20   11   D16");break;
-                case 102: labelCo.setText("T20   10   D16");break;
-                case 101: labelCo.setText("T17   18   D16");break;
-                case 100: labelCo.setText("T20   D20");break;
-                case  99: labelCo.setText("T19   10   D16");break;
-                case  98: labelCo.setText("T20   D19");break;
-                case  97: labelCo.setText("T19   D20");break;
-                case  96: labelCo.setText("T20   D18");break;
-                case  95: labelCo.setText("T19   D19");break;
-                case  94: labelCo.setText("T18   D20");break;
-                case  93: labelCo.setText("T19   D18");break;
-                case  92: labelCo.setText("T20   D16");break;
-                case  91: labelCo.setText("T17   D20");break;
-                case  90: labelCo.setText("T18   D18");break;
-                case  89: labelCo.setText("T19   D16");break;
-                case  88: labelCo.setText("T16   D20");break;
-                case  87: labelCo.setText("T17   D18");break;
-                case  86: labelCo.setText("T18   D16");break;
-                case  85: labelCo.setText("T15   D20");break;
-                case  84: labelCo.setText("T20   D12");break;
-                case  83: labelCo.setText("T17   D16");break;
-                case  82: labelCo.setText("T14   D20");break;
-                case  81: labelCo.setText("T15   D18");break;
-                case  80: labelCo.setText("T16   D16");break;
-                case  79: labelCo.setText("T13   D20");break;
-                case  78: labelCo.setText("T14   D18");break;
-                case  77: labelCo.setText("T19   D20");break;
-                case  76: labelCo.setText("T20   D8");break;
-                case  75: labelCo.setText("T15   D15");break;
-                case  74: labelCo.setText("T14   D16");break;
-                case  73: labelCo.setText("T19   D8");break;
-                case  72: labelCo.setText("T20   D6");break;
-                case  71: labelCo.setText("T13   D6");break;
-                case  70: labelCo.setText("T18   D8");break;
-                case  69: labelCo.setText("T19   D6");break;
-                case  68: labelCo.setText("T16   D10");break;
-                case  67: labelCo.setText("T17   D8");break;
-                case  66: labelCo.setText("T10   D18");break;
-                case  65: labelCo.setText("25   D20");break;
-                case  64: labelCo.setText("T16   D8");break;
-                case  63: labelCo.setText("T13   D12");break;
-                case  62: labelCo.setText("T10   D16");break;
-                case  61: labelCo.setText("T13   D6");break;
-                case  60: labelCo.setText("20   D20");break;
-                case  59: labelCo.setText("19   D20");break;
-                case  58: labelCo.setText("18   D20");break;
-                case  57: labelCo.setText("17   D20");break;
-                case  56: labelCo.setText("16   D20");break;
-                case  55: labelCo.setText("15   D20");break;
-                case  54: labelCo.setText("14   D20");break;
-                case  53: labelCo.setText("13   D20");break;
-                case  52: labelCo.setText("20   D20");break;
-                case  51: labelCo.setText("19   D16");break;
-                case  50: labelCo.setText("BULL");break;
-                case  49: labelCo.setText("17   D16");break;
-                case  48: labelCo.setText("16   D16");break;
-                case  47: labelCo.setText("15   D16");break;
-                case  46: labelCo.setText("6 D20");break;
-                case  45: labelCo.setText("5   D20");break;
-                case  44: labelCo.setText("12   D16");break;
-                case  43: labelCo.setText("11   D16");break;
-                case  42: labelCo.setText("10   D16");break;
-                case  41: labelCo.setText("9   D16");break;
-                case  40: labelCo.setText("D20");break;
-                case  39: labelCo.setText("7   D16");break;
-                case  38: labelCo.setText("D19");break;
-                case  37: labelCo.setText("5   D16");break;
-                case  36: labelCo.setText("D18");break;
-                case  35: labelCo.setText("3   D16");break;
-                case  34: labelCo.setText("D17");break;
-                case  33: labelCo.setText("1   D16");break;
-                case  32: labelCo.setText("D16");break;
-                case  31: labelCo.setText("15   D8");break;
-                case  30: labelCo.setText("D15");break;
-                case  29: labelCo.setText("13   D8");break;
-                case  28: labelCo.setText("D14");break;
-                case  27: labelCo.setText("11   D8");break;
-                case  26: labelCo.setText("D13");break;
-                case  25: labelCo.setText("9   D8");break;
-                case  24: labelCo.setText("D12");break;
-                case  23: labelCo.setText("7   D8");break;
-                case  22: labelCo.setText("D11");break;
-                case  21: labelCo.setText("5   D8");break;
-                case  20: labelCo.setText("D10");break;
-                case  19: labelCo.setText("3   D8");break;
-                case  18: labelCo.setText("D9");break;
-                case  17: labelCo.setText("9   D4");break;
-                case  16: labelCo.setText("D8");break;
-                case  15: labelCo.setText("7   D4");break;
-                case  14: labelCo.setText("D7");break;
-                case  13: labelCo.setText("5   D4");break;
-                case  12: labelCo.setText("D6");break;
-                case  11: labelCo.setText("3   D4");break;
-                case  10: labelCo.setText("D5");break;
-                case   9: labelCo.setText("1    D4");break;
-                case   8: labelCo.setText("D4");break;
-                case   7: labelCo.setText("3   D2");break;
-                case   6: labelCo.setText("D3");break;
-                case   5: labelCo.setText("1   D2");break;
-                case   4: labelCo.setText("D2");break;
-                case   3: labelCo.setText("1   D1");break;
-                case   2: labelCo.setText("D2");break;
-                default: labelCo.setText("");break;
+                case 170: setLabelValue(labelCo,"T20   T20   Bull");break;
+                case 167: setLabelValue(labelCo,"T20   T19   Bull");break;
+                case 164: setLabelValue(labelCo,"T20   T18   Bull");break;
+                case 161: setLabelValue(labelCo,"T20   T17   Bull");break;
+                case 160: setLabelValue(labelCo,"T20   T20   D20");break;
+                case 158: setLabelValue(labelCo,"T20   T20   D19");break;
+                case 156: setLabelValue(labelCo,"T20   T20   D18");break;
+                case 155: setLabelValue(labelCo,"T20   T15   Bull");break;
+                case 154: setLabelValue(labelCo,"T20   T18   D20");break;
+                case 153: setLabelValue(labelCo,"T20   T19   D18");break;
+                case 152: setLabelValue(labelCo,"T20   T20   D16");break;
+                case 151: setLabelValue(labelCo,"T20   T17   D20");break;
+                case 150: setLabelValue(labelCo,"T20   T18   D18");break;
+                case 149: setLabelValue(labelCo,"T20   T19   D16");break;
+                case 148: setLabelValue(labelCo,"T20   T16   D20");break;
+                case 147: setLabelValue(labelCo,"T20   T17   D18");break;
+                case 146: setLabelValue(labelCo,"T20   T18   D16");break;
+                case 145: setLabelValue(labelCo,"T20   T15   D20");break;
+                case 144: setLabelValue(labelCo,"T20   T20   D12");break;
+                case 143: setLabelValue(labelCo,"T20   T17   D16");break;
+                case 142: setLabelValue(labelCo,"T20   T14   D20");break;
+                case 141: setLabelValue(labelCo,"T20   T15   D18");break;
+                case 140: setLabelValue(labelCo,"T20   T20   D10");break;
+                case 139: setLabelValue(labelCo,"T20   T13   D20");break;
+                case 138: setLabelValue(labelCo,"T20   T14   D18");break;
+                case 137: setLabelValue(labelCo,"T17   T18   D16");break;
+                case 136: setLabelValue(labelCo,"T20   T20   D8");break;
+                case 135: setLabelValue(labelCo,"T20   T15   D15");break;
+                case 134: setLabelValue(labelCo,"T20   T14   D16");break;
+                case 133: setLabelValue(labelCo,"T20   T19   D8");break;
+                case 132: setLabelValue(labelCo,"T20   T20   D6");break;
+                case 131: setLabelValue(labelCo,"T20   T13   D16");break;
+                case 130: setLabelValue(labelCo,"T20   T18   D8");break;
+                case 129: setLabelValue(labelCo,"T19   T20   D6");break;
+                case 128: setLabelValue(labelCo,"T18   T14   D16");break;
+                case 127: setLabelValue(labelCo,"T19   T18   D8");break;
+                case 126: setLabelValue(labelCo,"T19   T19   D6");break;
+                case 125: setLabelValue(labelCo,"BULL  T20   D20");break;
+                case 124: setLabelValue(labelCo,"T20   T16   D16");break;
+                case 123: setLabelValue(labelCo,"T19   T16   D9");break;
+                case 122: setLabelValue(labelCo,"T18   T20   D4");break;
+                case 121: setLabelValue(labelCo,"T20   T15   D8");break;
+                case 120: setLabelValue(labelCo,"T20    20   D20");break;
+                case 119: setLabelValue(labelCo,"T20   19   D20");break;
+                case 118: setLabelValue(labelCo,"T20   18   D20");break;
+                case 117: setLabelValue(labelCo,"T20   17   D20");break;
+                case 116: setLabelValue(labelCo,"T20   16   D20");break;
+                case 115: setLabelValue(labelCo,"T20   15   D20");break;
+                case 114: setLabelValue(labelCo,"T20   14   D20");break;
+                case 113: setLabelValue(labelCo,"T20   13   D20");break;
+                case 112: setLabelValue(labelCo,"T20   20   D16");break;
+                case 111: setLabelValue(labelCo,"T20   19   D16");break;
+                case 110: setLabelValue(labelCo,"T20   18   D16");break;
+                case 109: setLabelValue(labelCo,"T20   17   D16");break;
+                case 108: setLabelValue(labelCo,"T20   16   D16");break;
+                case 107: setLabelValue(labelCo,"T19   18   D16");break;
+                case 106: setLabelValue(labelCo,"T20   14   D16");break;
+                case 105: setLabelValue(labelCo,"T20   13   D16");break;
+                case 104: setLabelValue(labelCo,"T18   18   D16");break;
+                case 103: setLabelValue(labelCo,"T20   11   D16");break;
+                case 102: setLabelValue(labelCo,"T20   10   D16");break;
+                case 101: setLabelValue(labelCo,"T17   18   D16");break;
+                case 100: setLabelValue(labelCo,"T20   D20");break;
+                case  99: setLabelValue(labelCo,"T19   10   D16");break;
+                case  98: setLabelValue(labelCo,"T20   D19");break;
+                case  97: setLabelValue(labelCo,"T19   D20");break;
+                case  96: setLabelValue(labelCo,"T20   D18");break;
+                case  95: setLabelValue(labelCo,"T19   D19");break;
+                case  94: setLabelValue(labelCo,"T18   D20");break;
+                case  93: setLabelValue(labelCo,"T19   D18");break;
+                case  92: setLabelValue(labelCo,"T20   D16");break;
+                case  91: setLabelValue(labelCo,"T17   D20");break;
+                case  90: setLabelValue(labelCo,"T18   D18");break;
+                case  89: setLabelValue(labelCo,"T19   D16");break;
+                case  88: setLabelValue(labelCo,"T16   D20");break;
+                case  87: setLabelValue(labelCo,"T17   D18");break;
+                case  86: setLabelValue(labelCo,"T18   D16");break;
+                case  85: setLabelValue(labelCo,"T15   D20");break;
+                case  84: setLabelValue(labelCo,"T20   D12");break;
+                case  83: setLabelValue(labelCo,"T17   D16");break;
+                case  82: setLabelValue(labelCo,"T14   D20");break;
+                case  81: setLabelValue(labelCo,"T15   D18");break;
+                case  80: setLabelValue(labelCo,"T16   D16");break;
+                case  79: setLabelValue(labelCo,"T13   D20");break;
+                case  78: setLabelValue(labelCo,"T14   D18");break;
+                case  77: setLabelValue(labelCo,"T19   D20");break;
+                case  76: setLabelValue(labelCo,"T20   D8");break;
+                case  75: setLabelValue(labelCo,"T15   D15");break;
+                case  74: setLabelValue(labelCo,"T14   D16");break;
+                case  73: setLabelValue(labelCo,"T19   D8");break;
+                case  72: setLabelValue(labelCo,"T20   D6");break;
+                case  71: setLabelValue(labelCo,"T13   D6");break;
+                case  70: setLabelValue(labelCo,"T18   D8");break;
+                case  69: setLabelValue(labelCo,"T19   D6");break;
+                case  68: setLabelValue(labelCo,"T16   D10");break;
+                case  67: setLabelValue(labelCo,"T17   D8");break;
+                case  66: setLabelValue(labelCo,"T10   D18");break;
+                case  65: setLabelValue(labelCo,"25   D20");break;
+                case  64: setLabelValue(labelCo,"T16   D8");break;
+                case  63: setLabelValue(labelCo,"T13   D12");break;
+                case  62: setLabelValue(labelCo,"T10   D16");break;
+                case  61: setLabelValue(labelCo,"T13   D6");break;
+                case  60: setLabelValue(labelCo,"20   D20");break;
+                case  59: setLabelValue(labelCo,"19   D20");break;
+                case  58: setLabelValue(labelCo,"18   D20");break;
+                case  57: setLabelValue(labelCo,"17   D20");break;
+                case  56: setLabelValue(labelCo,"16   D20");break;
+                case  55: setLabelValue(labelCo,"15   D20");break;
+                case  54: setLabelValue(labelCo,"14   D20");break;
+                case  53: setLabelValue(labelCo,"13   D20");break;
+                case  52: setLabelValue(labelCo,"20   D20");break;
+                case  51: setLabelValue(labelCo,"19   D16");break;
+                case  50: setLabelValue(labelCo,"BULL");break;
+                case  49: setLabelValue(labelCo,"17   D16");break;
+                case  48: setLabelValue(labelCo,"16   D16");break;
+                case  47: setLabelValue(labelCo,"15   D16");break;
+                case  46: setLabelValue(labelCo,"6 D20");break;
+                case  45: setLabelValue(labelCo,"5   D20");break;
+                case  44: setLabelValue(labelCo,"12   D16");break;
+                case  43: setLabelValue(labelCo,"11   D16");break;
+                case  42: setLabelValue(labelCo,"10   D16");break;
+                case  41: setLabelValue(labelCo,"9   D16");break;
+                case  40: setLabelValue(labelCo,"D20");break;
+                case  39: setLabelValue(labelCo,"7   D16");break;
+                case  38: setLabelValue(labelCo,"D19");break;
+                case  37: setLabelValue(labelCo,"5   D16");break;
+                case  36: setLabelValue(labelCo,"D18");break;
+                case  35: setLabelValue(labelCo,"3   D16");break;
+                case  34: setLabelValue(labelCo,"D17");break;
+                case  33: setLabelValue(labelCo,"1   D16");break;
+                case  32: setLabelValue(labelCo,"D16");break;
+                case  31: setLabelValue(labelCo,"15   D8");break;
+                case  30: setLabelValue(labelCo,"D15");break;
+                case  29: setLabelValue(labelCo,"13   D8");break;
+                case  28: setLabelValue(labelCo,"D14");break;
+                case  27: setLabelValue(labelCo,"11   D8");break;
+                case  26: setLabelValue(labelCo,"D13");break;
+                case  25: setLabelValue(labelCo,"9   D8");break;
+                case  24: setLabelValue(labelCo,"D12");break;
+                case  23: setLabelValue(labelCo,"7   D8");break;
+                case  22: setLabelValue(labelCo,"D11");break;
+                case  21: setLabelValue(labelCo,"5   D8");break;
+                case  20: setLabelValue(labelCo,"D10");break;
+                case  19: setLabelValue(labelCo,"3   D8");break;
+                case  18: setLabelValue(labelCo,"D9");break;
+                case  17: setLabelValue(labelCo,"9   D4");break;
+                case  16: setLabelValue(labelCo,"D8");break;
+                case  15: setLabelValue(labelCo,"7   D4");break;
+                case  14: setLabelValue(labelCo,"D7");break;
+                case  13: setLabelValue(labelCo,"5   D4");break;
+                case  12: setLabelValue(labelCo,"D6");break;
+                case  11: setLabelValue(labelCo,"3   D4");break;
+                case  10: setLabelValue(labelCo,"D5");break;
+                case   9: setLabelValue(labelCo,"1    D4");break;
+                case   8: setLabelValue(labelCo,"D4");break;
+                case   7: setLabelValue(labelCo,"3   D2");break;
+                case   6: setLabelValue(labelCo,"D3");break;
+                case   5: setLabelValue(labelCo,"1   D2");break;
+                case   4: setLabelValue(labelCo,"D2");break;
+                case   3: setLabelValue(labelCo,"1   D1");break;
+                case   2: setLabelValue(labelCo,"D2");break;
+                default: setLabelValue(labelCo,"");break;
         }            
     }
     
+    private void paneChange(Pane changeFrom, Pane changeTo){
+        changeTo.setVisible(true);
+        changeTo.setDisable(false);
+        changeFrom.setVisible(false);
+        changeFrom.setDisable(true);
+    }
+    
+    public void setLabelValue(Label label, String text){
+        label.setText(text);
+    }
+    public void clearStatData(){
+        actualStat = new Stats();
+        scoreList.clear();
+        coHappened = false;
+        isSecondUndo = false;
+        latestCo = 0;
+        chekoutTry = 0;    
+    }
+    
+    public void initActualStat(String name){
+        actualStat = new Stats();
+        actualStat.setHCo(0);
+        actualStat.setPlayedGamesNumber(0);
+        actualStat.setUsedDartsNumber(0);
+        actualStat.setChekoutTry(0);
+        actualStat.setUserName(name);
+    }
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     }
