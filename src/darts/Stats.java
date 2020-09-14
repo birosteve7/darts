@@ -27,10 +27,9 @@ public class Stats {
         this.usedDartsNumber = new SimpleStringProperty("");
     }
     
-    public Stats(String userName, String password, int Hi, int HCo, int chekoutTry, int playedGamesNumber, int usedDartsNumber) {
+    public Stats(String userName, String password, int HCo, int chekoutTry, int playedGamesNumber, int usedDartsNumber) {
         this.userPassword = new SimpleStringProperty(password);
         this.userName = new SimpleStringProperty(userName);
-        this.Hi = new SimpleStringProperty(String.valueOf(Hi));
         this.HCo = new SimpleStringProperty(String.valueOf(HCo));
         this.chekoutTry = new SimpleStringProperty(String.valueOf(chekoutTry));
         this.playedGamesNumber =  new SimpleStringProperty(String.valueOf(playedGamesNumber));

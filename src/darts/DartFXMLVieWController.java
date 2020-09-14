@@ -184,6 +184,7 @@ public class DartFXMLVieWController implements Initializable {
     boolean isSecondUndo = false;
     int latestCo = 0;
     int chekoutTry = 0;
+    
     @FXML
     private void handleButtonOne(ActionEvent event) {
         handleButton("1");
@@ -244,14 +245,12 @@ public class DartFXMLVieWController implements Initializable {
         
         for (int i=0; i<userNames.size(); i++){
             if (actualUserName.equals(userNames.get(i))){
-                System.out.println("Megvan!");
                 String savedPassword = db.getUserPassword(actualUserName);
-                System.out.println("SavedPassword: "+savedPassword);
-                System.out.println("Actual pass: "+actualPassword);
                 if(actualPassword.equals(savedPassword)){
                     paneChange(userPane,menuPane);
-                    actualStat = db.getOwnStats(actualUserName);
-                    outputUserName.setText(actualStat.getUserName()+"!");
+                    //db.getOwnStats(actualUserName);
+                    initActualStat(actualUserName);
+                    outputUserName.setText(actualUserName+"!");
                     return;
                 }
             }
@@ -291,7 +290,6 @@ public class DartFXMLVieWController implements Initializable {
         paneChange(menuPane,statPane);
 
         showedStats = db.getOwnStats(actualStat.getUserName());
-        System.out.println("showedStats.getPlayedGames() "+showedStats.getPlayedGames());
         if (showedStats.getPlayedGames().equals("0")){
             statAvg.setText("");
             statCo.setText("");
@@ -304,13 +302,11 @@ public class DartFXMLVieWController implements Initializable {
             setLabelValue(statPlayedGames, showedStats.getPlayedGames());
             setLabelValue(statCo, String.valueOf(Integer.valueOf(showedStats.getPlayedGames())*100/Integer.valueOf(showedStats.getChekoutTry())));
             setLabelValue(statHCo, showedStats.getHCo());
-            setLabelValue(statHScore, showedStats.getHi());
         }
     }
     @FXML
     private void handleBtnGame(ActionEvent event) {
-        actualStat = db.getOwnStats(actualStat.getUserName());
-        System.out.println("played games: "+actualStat.getPlayedGames());
+        //actualStat = db.getOwnStats(actualStat.getUserName());
         paneChange(menuPane,scorePane);
     }
     @FXML
@@ -417,13 +413,12 @@ public class DartFXMLVieWController implements Initializable {
             dartNumber = Integer.valueOf(usedDartsGroup.getSelectedToggle().toString().substring(usedDartsGroup.getSelectedToggle().toString().length()-2, 
                                          usedDartsGroup.getSelectedToggle().toString().length()-1));
             actualStat.setUsedDartsNumber(Integer.valueOf(actualStat.getUsedDartsNumber())+dartNumber);
-            System.out.println("Dart Number: "+actualStat.getUsedDartsNumber());
             actualStat.setChekoutTry(chekoutTry);
             outputDouble.setText(String.valueOf(actualStat.getchekoutPercentage()));
-            coHappened = false;
             setLabelValue(gameAvg, String.valueOf(actualStat.getAvarage()));
-            inputScore.clear();
             setLabelValue(ouputLegAvg, "");
+            coHappened = false;
+            inputScore.clear();
             scoreList.clear();
         }
         paneChange(checkoutPane, scorePane);
@@ -531,14 +526,10 @@ public class DartFXMLVieWController implements Initializable {
         inputScore.clear();
     }
     public void checkOutHappened(double avg, int checkOutScore){
-        int hCo = 0;
         coHappened = true;
         setLabelValue(outputRem, "501");
         giveCheckOutNumber(true);
-        //avgTable.addAvg(avg, actualStat.getUserName());
-        if (actualStat.getHCo() == "")
-            hCo = 0;
-        if (checkOutScore >= Integer.valueOf(hCo)) {
+        if (checkOutScore >= Integer.valueOf(actualStat.getHCo())) {
             actualStat.setHCo(checkOutScore);
         }
         setLabelValue(outputHCo,actualStat.getHCo());
@@ -741,6 +732,15 @@ public class DartFXMLVieWController implements Initializable {
         isSecondUndo = false;
         latestCo = 0;
         chekoutTry = 0;    
+    }
+    
+    public void initActualStat(String name){
+        actualStat = new Stats();
+        actualStat.setHCo(0);
+        actualStat.setPlayedGamesNumber(0);
+        actualStat.setUsedDartsNumber(0);
+        actualStat.setChekoutTry(0);
+        actualStat.setUserName(name);
     }
     @Override
     public void initialize(URL url, ResourceBundle rb) {

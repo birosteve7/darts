@@ -55,7 +55,7 @@ public class DB {
             ResultSet rs = dbmd.getTables(null, "APP", "DARTS", null);
             if(!rs.next())
             { 
-                createStatement.execute("create table darts( username varchar(10), userpassword varchar(12), highestscore int, highestcheckout int, checkouttry int, playedgames int, useddartsnumber int)");
+                createStatement.execute("create table darts( username varchar(10), userpassword varchar(12), highestcheckout int, checkouttry int, playedgames int, useddartsnumber int)");
             }
         } catch (SQLException ex) {
             System.out.println("Valami baj van az adattáblák létrehozásakor.");
@@ -70,7 +70,7 @@ public class DB {
             ResultSet rs = createStatement.executeQuery(sql);
             stats = new ArrayList<Stats>();
             while(rs.next()){
-                Stats actualStat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestscore"), rs.getInt("highestcheckout"), 
+                Stats actualStat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestcheckout"), 
                                               rs.getInt("checkouttry"), rs.getInt("playedgames"), rs.getInt("useddartsnumber"));
                 stats.add(actualStat);
             }
@@ -87,14 +87,13 @@ public class DB {
         try {
             ResultSet rs = createStatement.executeQuery(sql);
             if (rs.next()) {
-                stat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestscore"), rs.getInt("highestcheckout"), 
+                stat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestcheckout"), 
                                   rs.getInt("checkouttry"), rs.getInt("playedgames"), rs.getInt("useddartsnumber"));
             }
         } catch (SQLException ex) {
             System.out.println("Valami baj van  a kiolvasáskor");
             System.out.println(""+ex);
         }
-        System.out.println("Stat: "+stat.getHi());
         return stat; 
     }
     
@@ -131,7 +130,7 @@ public class DB {
 
     public void addStat(String username, String password){
         try {
-            String sql = "insert into darts ( username, userpassword, highestscore, highestcheckout,checkouttry,playedgames,useddartsnumber) values (?,?,?,?,?,?,?)";
+            String sql = "insert into darts ( username, userpassword, highestcheckout,checkouttry,playedgames,useddartsnumber) values (?,?,?,?,?,?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
@@ -139,7 +138,6 @@ public class DB {
             preparedStatement.setInt(4, 0);
             preparedStatement.setInt(5, 0);
             preparedStatement.setInt(6, 0);
-            preparedStatement.setInt(7, 0);
             preparedStatement.execute();
         } catch (SQLException ex) {
             System.out.println("Valami baj van  a stat átadáskor");
@@ -149,14 +147,13 @@ public class DB {
     
         public void clearStat(String userName){
         try {
-            String sql = "update darts set highestscore = ?, highestcheckout = ?, checkouttry = ?, playedgames = ?, useddartsnumber = ? where username=?";
+            String sql = "update darts set highestcheckout = ?, checkouttry = ?, playedgames = ?, useddartsnumber = ? where username=?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, 0);
             preparedStatement.setInt(2, 0);
             preparedStatement.setInt(3, 0);
             preparedStatement.setInt(4, 0);
-            preparedStatement.setInt(5, 0);
-            preparedStatement.setString(6, userName);
+            preparedStatement.setString(5, userName);
             preparedStatement.execute();
         } catch (SQLException ex) {
             System.out.println("Valami baj van statok törlésekor átadáskor");
@@ -168,10 +165,6 @@ public class DB {
         Integer Hi=0;
         Integer HCo=0;
         Stats oldStats = getOwnStats(newStats.getUserName());
-        if (Integer.valueOf(newStats.getHi()) > Integer.valueOf(oldStats.getHi()))
-            Hi = Integer.valueOf(newStats.getHi());
-        else
-            Hi = Integer.valueOf(oldStats.getHi());
     
         if (Integer.valueOf(newStats.getHCo()) > Integer.valueOf(oldStats.getHCo()))
             HCo = Integer.valueOf(newStats.getHCo());
@@ -181,14 +174,13 @@ public class DB {
         int checkoutPercentage = Integer.valueOf(oldStats.getPlayedGames())+Integer.valueOf(newStats.getPlayedGames());
         int usedDartsNumber = Integer.valueOf(oldStats.getUsedDartsNumber())+Integer.valueOf(newStats.getUsedDartsNumber());
         try {
-            String sql = "update darts set highestscore = ?, highestcheckout = ?, checkouttry = ?, playedgames = ?, useddartsnumber = ? where username=?";
+            String sql = "update darts set highestcheckout = ?, checkouttry = ?, playedgames = ?, useddartsnumber = ? where username=?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, Hi);
-            preparedStatement.setInt(2, HCo);
-            preparedStatement.setInt(3, checkoutTry);
-            preparedStatement.setInt(4, checkoutPercentage);
-            preparedStatement.setInt(5, usedDartsNumber);
-            preparedStatement.setString(6, oldStats.getUserName());
+            preparedStatement.setInt(1, HCo);
+            preparedStatement.setInt(2, checkoutTry);
+            preparedStatement.setInt(3, checkoutPercentage);
+            preparedStatement.setInt(4, usedDartsNumber);
+            preparedStatement.setString(5, oldStats.getUserName());
             preparedStatement.execute();
         } catch (SQLException ex) {
             System.out.println("Valami baj van a stat hozzáadásakor");
