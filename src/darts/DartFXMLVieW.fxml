@@ -58,15 +58,14 @@
          <children>
             <Pane id="checkoutHappenedPane" fx:id="checkoutHappenedPane" disable="true" layoutY="96.0" prefHeight="104.0" prefWidth="346.0" visible="false">
                <children>
-                  <RadioButton id="checkout2" fx:id="checkout2" layoutX="166.0" layoutY="42.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="61.0" text="2" />
-                  <RadioButton id="checkout3" fx:id="checkout3" layoutX="246.0" layoutY="38.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="61.0" text="3" />
-                  <Label layoutX="54.0" layoutY="4.0" prefHeight="38.0" prefWidth="270.0" text="How many darts did you used to checkout?" />
-                  <RadioButton id="checkout0" fx:id="checkout0" layoutX="26.0" layoutY="46.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="35.0" text="0" />
-                  <RadioButton id="checkout1" fx:id="checkout1" layoutX="93.0" layoutY="46.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="52.0" text="1" />
+                  <RadioButton id="checkout2" fx:id="checkout2" layoutX="143.0" layoutY="42.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="61.0" text="2" />
+                  <RadioButton id="checkout3" fx:id="checkout3" layoutX="229.0" layoutY="42.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="61.0" text="3" />
+                  <Label layoutX="14.0" layoutY="8.0" prefHeight="38.0" prefWidth="270.0" text="How many darts did you used to checkout?" />
+                  <RadioButton id="checkout1" fx:id="checkout1" layoutX="60.0" layoutY="46.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="52.0" text="1" />
                </children>
             </Pane>
             <RadioButton id="radio0" fx:id="radio0" layoutX="25.0" layoutY="52.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="35.0" text="0" />
-            <Label layoutX="55.0" layoutY="19.0" prefHeight="38.0" prefWidth="270.0" text="How many darts did you shout on Double?" />
+            <Label layoutX="25.0" layoutY="19.0" prefHeight="38.0" prefWidth="296.0" text="How many darts did you shout on Double?" />
             <RadioButton id="radio1" fx:id="radio1" layoutX="95.0" layoutY="38.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="52.0" text="1" />
             <RadioButton id="radio2" fx:id="radio2" layoutX="167.0" layoutY="49.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="61.0" text="2" />
             <RadioButton id="radio3" fx:id="radio3" layoutX="247.0" layoutY="48.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="61.0" text="3" />
@@ -159,20 +158,20 @@
       </Pane>
       <Pane id="statPane" fx:id="statPane" layoutY="1.0" prefHeight="497.0" prefWidth="370.0" visible="false" AnchorPane.bottomAnchor="-19.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
          <effect>
-            <DropShadow />
+            <DropShadow color="#8a7e36" />
          </effect>
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#50a9cd" height="494.0" layoutX="1.0" stroke="BLACK" strokeType="INSIDE" width="370.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d9e581" height="40.0" layoutX="-7.0" layoutY="-15.0" stroke="#9e9f8b" strokeType="OUTSIDE" strokeWidth="5.0" width="385.0" />
-            <Label layoutX="104.0" layoutY="-1.0" text="501 game Statistic" textFill="#1647a2">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d9e581" height="71.0" layoutX="-22.0" layoutY="-30.0" stroke="#9e9f8b" strokeType="OUTSIDE" strokeWidth="5.0" width="401.0" />
+            <Label layoutX="113.0" layoutY="6.0" text="501 game Statistic" textFill="#1647a2">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Button id="btnStatExit" fx:id="btnStatExit" layoutX="201.0" layoutY="457.0" mnemonicParsing="false" onAction="#handleBtnExit" prefHeight="28.0" prefWidth="102.0" text="Cancel" />
-            <Button id="btnStatReset" fx:id="btnStatReset" layoutX="72.0" layoutY="457.0" mnemonicParsing="false" onAction="#clearStat" prefHeight="27.0" prefWidth="102.0" text="Reset" />
-            <ListView id="statNameList" fx:id="statNameList" layoutX="72.0" layoutY="35.0" prefHeight="414.0" prefWidth="161.0" />
-            <ListView id="statList" fx:id="statList" layoutX="238.0" layoutY="35.0" prefHeight="414.0" prefWidth="70.0" />
+            <Button id="btnStatExit" fx:id="btnStatExit" layoutX="208.0" layoutY="454.0" mnemonicParsing="false" onAction="#handleBtnExit" prefHeight="30.0" prefWidth="102.0" text="Cancel" />
+            <Button id="btnStatReset" fx:id="btnStatReset" layoutX="72.0" layoutY="454.0" mnemonicParsing="false" onAction="#removeStatFromDB" prefHeight="30.0" prefWidth="102.0" text="Reset" />
+            <ListView id="statNameList" fx:id="statNameList" layoutX="72.0" layoutY="59.0" prefHeight="385.0" prefWidth="161.0" />
+            <ListView id="statList" fx:id="statList" layoutX="239.0" layoutY="59.0" prefHeight="385.0" prefWidth="70.0" />
          </children>
       </Pane>
       <Pane id="userPane" fx:id="userPane" prefHeight="480.0" prefWidth="372.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-2.0" AnchorPane.topAnchor="0.0">

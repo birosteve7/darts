@@ -118,8 +118,6 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private RadioButton radio3;
     @FXML
-    private RadioButton checkout0;
-    @FXML
     private RadioButton checkout1;
     @FXML
     private RadioButton checkout2;
@@ -345,6 +343,7 @@ public class DartFXMLVieWController implements Initializable {
         setLabelValue(outputHCo, "");
         setLabelValue(outputDouble, "");
         setLabelValue(gameAvg, "");
+        clearStatData();
     }
     
     @FXML
@@ -394,20 +393,28 @@ public class DartFXMLVieWController implements Initializable {
         int dartNumber = 0;
         int checkoutNumber = Integer.valueOf(group.getSelectedToggle().toString().substring(group.getSelectedToggle().toString().length()-2, 
                                              group.getSelectedToggle().toString().length()-1));
-        chekoutTry+=checkoutNumber;
         if (coHappened) {
-            actualStat.setPlayedGamesNumber(Integer.valueOf(actualStat.getPlayedGames())+1);
             dartNumber = Integer.valueOf(usedDartsGroup.getSelectedToggle().toString().substring(usedDartsGroup.getSelectedToggle().toString().length()-2, 
                                          usedDartsGroup.getSelectedToggle().toString().length()-1));
+            System.out.println("RemScore: "+outputRem.getText());
+            if (!isValidCheckoutData(checkoutNumber,dartNumber)){
+                alert("Your given data is invalid");
+                return;
+            }
+            chekoutTry+=checkoutNumber;
+            actualStat.setPlayedGamesNumber(Integer.valueOf(actualStat.getPlayedGames())+1);
             actualStat.setUsedDartsNumber(Integer.valueOf(actualStat.getUsedDartsNumber())+dartNumber);
             actualStat.setChekoutTry(chekoutTry);
             outputDouble.setText(String.valueOf(actualStat.getchekoutPercentage()));
-            setLabelValue(gameAvg, df2.format(String.valueOf(actualStat.getAvarage())));
+            setLabelValue(gameAvg, String.valueOf(df2.format(actualStat.getAvarage())));
             setLabelValue(outputLegAvg, "");
+            setLabelValue(outputRem, "501");
             coHappened = false;
             inputScore.clear();
             scoreList.clear();
-        }
+        } else {
+            chekoutTry+=checkoutNumber;
+        }    
         paneChange(checkoutPane, scorePane);
     }
     
@@ -455,7 +462,7 @@ public class DartFXMLVieWController implements Initializable {
     }
     
     @FXML
-    private void clearStat (){
+    private void removeStatFromDB (){
         db.clearStat(actualStat.getUserName());
         actualStat = db.getOwnStats(actualStat.getUserName());
         statNameList.getItems().clear();
@@ -498,16 +505,21 @@ public class DartFXMLVieWController implements Initializable {
     }
 
     private void giveCheckOutNumber(Boolean checkOutHappend){
-        radio0.setToggleGroup(group);
-        radio1.setToggleGroup(group);
-        radio2.setToggleGroup(group);
-        radio3.setToggleGroup(group);
+        int remainScore = Integer.valueOf(outputRem.getText());
         
-        checkout0.setToggleGroup(usedDartsGroup);
-        checkout1.setToggleGroup(usedDartsGroup);
-        checkout2.setToggleGroup(usedDartsGroup);
-        checkout3.setToggleGroup(usedDartsGroup);
+        if (remainScore % 2 != 0 || 
+            (remainScore > 40 && remainScore != 50)) {
+            checkout1.setDisable(true);
+            radio3.setDisable(true);
+        }
+        if (remainScore > 100){
+            radio3.setDisable(true);
+            radio2.setDisable(true);
+            checkout1.setDisable(true);
+            checkout2.setDisable(true);
+        }
         if (checkOutHappend){
+            radio0.setDisable(true);
             checkoutHappenedPane.setVisible(true);
             checkoutHappenedPane.setDisable(false);
         }
@@ -530,9 +542,8 @@ public class DartFXMLVieWController implements Initializable {
         setRange(actualScore);
         avg = avarageCalculation(actualScore);
         newScore = remainingScore-actualScore;
-        setLabelValue(outputRem, String.valueOf(newScore));
         setLabelValue(outputHi, String.valueOf(Collections.max(scoreList)));
-        setLabelValue(outputLegAvg, df2.format(String.valueOf(avg)));
+        setLabelValue(outputLegAvg, String.valueOf(df2.format(avg)));
         
         if (newScore <= 170)
             checkOutTable(newScore);
@@ -545,14 +556,13 @@ public class DartFXMLVieWController implements Initializable {
         if (newScore <= 50 ){
             giveCheckOutNumber(false);
         }
-
+        setLabelValue(outputRem, String.valueOf(newScore));
         actualStat.setUsedDartsNumber(Integer.valueOf(actualStat.getUsedDartsNumber())+3);
         System.out.println("dart Number: "+actualStat.getUsedDartsNumber());
         inputScore.clear();
     }
     public void checkOutHappened(double avg, int checkOutScore){
         coHappened = true;
-        setLabelValue(outputRem, "501");
         giveCheckOutNumber(true);
         if (checkOutScore >= Integer.valueOf(actualStat.getHCo())) {
             actualStat.setHCo(checkOutScore);
@@ -818,10 +828,25 @@ public class DartFXMLVieWController implements Initializable {
             System.out.println("180!!!!!");
         }
     }
-   
+    public boolean isValidCheckoutData(int chekout, int usedDarts) {
+        int remainScore = Integer.valueOf(outputRem.getText());
+        if (usedDarts < chekout)
+            return false;
+        
+        if ((remainScore % 2 == 0 || (remainScore > 40 && remainScore != 50)) && usedDarts == chekout ) 
+            return false;
+        
+        return true;
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        radio0.setToggleGroup(group);
+        radio1.setToggleGroup(group);
+        radio2.setToggleGroup(group);
+        radio3.setToggleGroup(group);
+        checkout1.setToggleGroup(usedDartsGroup);
+        checkout2.setToggleGroup(usedDartsGroup);
+        checkout3.setToggleGroup(usedDartsGroup);
     }
 }
