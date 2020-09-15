@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
@@ -131,7 +132,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label id="ouputLegAvg" fx:id="ouputLegAvg" layoutX="82.0" layoutY="166.0" prefHeight="21.0" prefWidth="44.0">
+            <Label id="outputLegAvg" fx:id="outputLegAvg" layoutX="82.0" layoutY="166.0" prefHeight="21.0" prefWidth="44.0">
                <font>
                   <Font size="15.0" />
                </font>
@@ -156,75 +157,22 @@
             <Button id="btnBackfromScore" fx:id="btnBackfromScore" layoutX="279.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleBtnBackfromScore" prefHeight="25.0" prefWidth="77.0" text="Back" />
          </children>
       </Pane>
-      <Pane id="statPane" fx:id="statPane" prefHeight="480.0" prefWidth="370.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane id="statPane" fx:id="statPane" layoutY="1.0" prefHeight="497.0" prefWidth="370.0" visible="false" AnchorPane.bottomAnchor="-19.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
          <effect>
             <DropShadow />
          </effect>
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#50a9cd" height="480.0" stroke="BLACK" strokeType="INSIDE" width="370.0" />
-            <Rectangle arcHeight="2.0" arcWidth="3.0" fill="#9fa7af" height="265.0" layoutX="34.0" layoutY="100.0" opacity="0.41" stroke="#9f9b9b" strokeLineJoin="BEVEL" strokeMiterLimit="8.0" strokeType="OUTSIDE" strokeWidth="3.0" width="302.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#edeef0" height="54.0" layoutX="34.0" layoutY="309.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="302.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#edeef0" height="54.0" layoutX="34.0" layoutY="206.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="302.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#edeef0" height="54.0" layoutX="34.0" layoutY="99.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="302.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d9e581" height="65.0" layoutX="23.0" layoutY="15.0" stroke="#9e9f8b" strokeType="OUTSIDE" strokeWidth="5.0" width="325.0" />
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="99.0" prefHeight="54.0" prefWidth="150.0" text="Played games" textFill="#3b52b7">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#50a9cd" height="494.0" layoutX="1.0" stroke="BLACK" strokeType="INSIDE" width="370.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d9e581" height="40.0" layoutX="-7.0" layoutY="-15.0" stroke="#9e9f8b" strokeType="OUTSIDE" strokeWidth="5.0" width="385.0" />
+            <Label layoutX="104.0" layoutY="-1.0" text="501 game Statistic" textFill="#1647a2">
                <font>
-                  <Font name="Berlin Sans FB" size="15.0" />
+                  <Font size="20.0" />
                </font>
             </Label>
-            <Label layoutX="68.0" layoutY="27.0" text="501 game Statistic" textFill="#1647a2">
-               <font>
-                  <Font size="28.0" />
-               </font>
-            </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="157.0" prefHeight="46.0" prefWidth="150.0" text="Avarage: " textFill="#3b52b7">
-               <font>
-                  <Font name="Berlin Sans FB" size="15.0" />
-               </font>
-            </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="209.0" prefHeight="46.0" prefWidth="150.0" text="Highest score:" textFill="#3b52b7">
-               <font>
-                  <Font name="Berlin Sans FB" size="15.0" />
-               </font>
-            </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="263.0" prefHeight="46.0" prefWidth="150.0" text="Highest checkout: " textFill="#3b52b7">
-               <font>
-                  <Font name="Berlin Sans FB" size="15.0" />
-               </font>
-            </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="311.0" prefHeight="54.0" prefWidth="150.0" text="Checkout %:" textFill="#3b52b7">
-               <font>
-                  <Font name="Berlin Sans FB" size="15.0" />
-               </font>
-            </Label>
-            <Button id="btnStatExit" fx:id="btnStatExit" layoutX="195.0" layoutY="374.0" mnemonicParsing="false" onAction="#handleBtnExit" prefHeight="65.0" prefWidth="141.0" text="Exit" />
-            <Button id="btnStatReset" fx:id="btnStatReset" layoutX="40.0" layoutY="374.0" mnemonicParsing="false" onAction="#clearStat" prefHeight="65.0" prefWidth="131.0" text="Reset" />
-            <Label id="statPlayedGames" fx:id="statPlayedGames" alignment="CENTER" contentDisplay="CENTER" layoutX="181.0" layoutY="103.0" prefHeight="46.0" prefWidth="150.0" textFill="#df0909">
-               <font>
-                  <Font name="Candara Light" size="24.0" />
-               </font>
-            </Label>
-            <Label id="statAvg" fx:id="statAvg" alignment="CENTER" contentDisplay="CENTER" layoutX="184.0" layoutY="153.0" prefHeight="54.0" prefWidth="150.0" textFill="#df0909">
-               <font>
-                  <Font name="Candara Light" size="24.0" />
-               </font>
-            </Label>
-            <Label id="statHScore" fx:id="statHScore" alignment="CENTER" contentDisplay="CENTER" layoutX="181.0" layoutY="210.0" prefHeight="46.0" prefWidth="157.0" textFill="#df0909">
-               <font>
-                  <Font name="Candara Light" size="24.0" />
-               </font>
-            </Label>
-            <Label id="statHCo" fx:id="statHCo" alignment="CENTER" contentDisplay="CENTER" layoutX="185.0" layoutY="263.0" prefHeight="46.0" prefWidth="150.0" textFill="#df0909">
-               <font>
-                  <Font name="Candara Light" size="24.0" />
-               </font>
-            </Label>
-            <Label id="statCo" fx:id="statCo" alignment="CENTER" contentDisplay="CENTER" layoutX="185.0" layoutY="313.0" prefHeight="46.0" prefWidth="150.0" textFill="#df0909">
-               <font>
-                  <Font name="Candara Light" size="24.0" />
-               </font>
-            </Label>
-            <Line endX="-3.20001220703125" endY="264.0" layoutX="189.0" layoutY="103.0" startX="-4.0" startY="-4.0" />
+            <Button id="btnStatExit" fx:id="btnStatExit" layoutX="201.0" layoutY="457.0" mnemonicParsing="false" onAction="#handleBtnExit" prefHeight="28.0" prefWidth="102.0" text="Cancel" />
+            <Button id="btnStatReset" fx:id="btnStatReset" layoutX="72.0" layoutY="457.0" mnemonicParsing="false" onAction="#clearStat" prefHeight="27.0" prefWidth="102.0" text="Reset" />
+            <ListView id="statNameList" fx:id="statNameList" layoutX="72.0" layoutY="35.0" prefHeight="414.0" prefWidth="161.0" />
+            <ListView id="statList" fx:id="statList" layoutX="238.0" layoutY="35.0" prefHeight="414.0" prefWidth="70.0" />
          </children>
       </Pane>
       <Pane id="userPane" fx:id="userPane" prefHeight="480.0" prefWidth="372.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-2.0" AnchorPane.topAnchor="0.0">
@@ -257,7 +205,7 @@
             <PasswordField id="inputNewPassword" fx:id="inputNewPassword1" layoutX="95.0" layoutY="389.0" prefHeight="25.0" prefWidth="150.0" />
             <Label layoutX="18.0" layoutY="393.0" text="Repeate it:" textFill="#c8da51" />
             <Button id="btnSingUp" fx:id="btnSingUp" layoutX="276.0" layoutY="423.0" mnemonicParsing="false" onAction="#handleSingUpBtn" prefHeight="27.0" prefWidth="74.0" text="Sing up" />
-            <Line endX="275.60003662109375" layoutX="98.0" layoutY="231.0" startX="-100.0" stroke="#d5d16b" strokeWidth="5.0" />
+            <Line endX="286.0000305175781" layoutX="103.0" layoutY="226.0" startX="-100.0" stroke="#d5d16b" strokeWidth="5.0" />
          </children>
       </Pane>
     </children>
