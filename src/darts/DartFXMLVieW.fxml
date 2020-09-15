@@ -132,7 +132,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label id="ouputLegAvg" fx:id="ouputLegAvg" layoutX="82.0" layoutY="166.0" prefHeight="21.0" prefWidth="44.0">
+            <Label id="outputLegAvg" fx:id="outputLegAvg" layoutX="82.0" layoutY="166.0" prefHeight="21.0" prefWidth="44.0">
                <font>
                   <Font size="15.0" />
                </font>

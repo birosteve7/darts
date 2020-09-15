@@ -1,6 +1,7 @@
 package darts;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -99,7 +100,7 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private Label outputHi;
     @FXML
-    private Label ouputLegAvg;
+    private Label outputLegAvg;
     @FXML
     private Label outputHCo;
     @FXML
@@ -171,6 +172,7 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private ListView statList;
     
+    private static DecimalFormat df2 = new DecimalFormat("#.##");
     
     DB db = new DB();
     Stats actualStat = new Stats();
@@ -302,6 +304,7 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private void handleLogOutBtn(ActionEvent event) {
         paneChange(menuPane, userPane);
+        clearStatData();
         inputPassword.clear();
         inputUserName.clear();
         inputNewUserName.clear();
@@ -338,7 +341,7 @@ public class DartFXMLVieWController implements Initializable {
         paneChange(scorePane,menuPane);
         setLabelValue(outputRem, "501");
         setLabelValue(outputHi, "");
-        setLabelValue(ouputLegAvg, "");
+        setLabelValue(outputLegAvg, "");
         setLabelValue(outputHCo, "");
         setLabelValue(outputDouble, "");
         setLabelValue(gameAvg, "");
@@ -399,8 +402,8 @@ public class DartFXMLVieWController implements Initializable {
             actualStat.setUsedDartsNumber(Integer.valueOf(actualStat.getUsedDartsNumber())+dartNumber);
             actualStat.setChekoutTry(chekoutTry);
             outputDouble.setText(String.valueOf(actualStat.getchekoutPercentage()));
-            setLabelValue(gameAvg, String.valueOf(actualStat.getAvarage()));
-            setLabelValue(ouputLegAvg, "");
+            setLabelValue(gameAvg, df2.format(String.valueOf(actualStat.getAvarage())));
+            setLabelValue(outputLegAvg, "");
             coHappened = false;
             inputScore.clear();
             scoreList.clear();
@@ -447,6 +450,7 @@ public class DartFXMLVieWController implements Initializable {
         db.updateStat(actualStat);
         actualStat.setPlayedGamesNumber(0);
         actualStat.setUsedDartsNumber(0);
+        clearScoreBoardElements();
         paneChange(scorePane,menuPane);
     }
     
@@ -478,7 +482,7 @@ public class DartFXMLVieWController implements Initializable {
        
         System.out.println("Neme:"+userName);
         statList.getItems().add(showedStat.getPlayedGames());
-        statList.getItems().add(showedStat.getAvarage());
+        statList.getItems().add(df2.format(showedStat.getAvarage()));
         statList.getItems().add(showedStat.getchekoutPercentage());
         statList.getItems().add(showedStat.getHCo());
         statList.getItems().add(showedStat.getBelow20());
@@ -528,7 +532,7 @@ public class DartFXMLVieWController implements Initializable {
         newScore = remainingScore-actualScore;
         setLabelValue(outputRem, String.valueOf(newScore));
         setLabelValue(outputHi, String.valueOf(Collections.max(scoreList)));
-        setLabelValue(ouputLegAvg, String.valueOf(avg));
+        setLabelValue(outputLegAvg, df2.format(String.valueOf(avg)));
         
         if (newScore <= 170)
             checkOutTable(newScore);
@@ -753,6 +757,14 @@ public class DartFXMLVieWController implements Initializable {
         isSecondUndo = false;
         latestCo = 0;
         chekoutTry = 0;    
+    }
+    
+    public void clearScoreBoardElements(){
+        outputLegAvg.setText("");
+        gameAvg.setText("");
+        outputHi.setText("");
+        outputHCo.setText("");
+        outputDouble.setText("");
     }
     
     public void initActualStat(String name){
