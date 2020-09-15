@@ -16,7 +16,7 @@ public class Darts extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("DartFXMLVieW.fxml"));
         Scene scene = new Scene(root);
-        
+        scene.getStylesheets().add(getClass().getResource("stylesheet.css").toExternalForm());
         stage.setResizable(false);
         stage.setWidth(383);
         stage.setHeight(530);
