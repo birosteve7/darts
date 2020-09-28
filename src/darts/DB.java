@@ -55,7 +55,7 @@ public class DB {
             ResultSet rs = dbmd.getTables(null, "APP", "DARTS", null);
             if(!rs.next())
             { 
-                createStatement.execute("create table darts( username varchar(10), userpassword varchar(12), highestcheckout int, checkouttry int, playedgames int, useddartsnumber int, below20 int, above20 int, above40 int, above60 int, above80 int, above100 int, above120 int, above140 int, above160 int, p180 int)");
+                createStatement.execute("create table darts( username varchar(10), highestcheckout int, checkouttry int, playedgames int, useddartsnumber int, below20 int, above20 int, above40 int, above60 int, above80 int, above100 int, above120 int, above140 int, above160 int, p180 int)");
             }
         } catch (SQLException ex) {
             System.out.println("Valami baj van az adattáblák létrehozásakor.");
@@ -70,12 +70,11 @@ public class DB {
             ResultSet rs = createStatement.executeQuery(sql);
             stats = new ArrayList<Stats>();
             while(rs.next()){
-                Stats actualStat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestcheckout"), 
-                                              rs.getInt("checkouttry"), rs.getInt("playedgames"), rs.getInt("useddartsnumber"), 
-                                              rs.getInt("below20"), rs.getInt("above20"), rs.getInt("above40"),
-                                              rs.getInt("above60"), rs.getInt("above80"), rs.getInt("above100"),
-                                              rs.getInt("above120"), rs.getInt("above140"), rs.getInt("above160"),
-                                              rs.getInt("p180"));
+                Stats actualStat = new Stats( rs.getString("username"), rs.getInt("highestcheckout"), rs.getInt("checkouttry"), 
+                                              rs.getInt("playedgames"), rs.getInt("useddartsnumber"), rs.getInt("below20"),
+                                              rs.getInt("above20"),     rs.getInt("above40"),         rs.getInt("above60"), 
+                                              rs.getInt("above80"),     rs.getInt("above100"),        rs.getInt("above120"), 
+                                              rs.getInt("above140"),    rs.getInt("above160"),        rs.getInt("p180"));
                 stats.add(actualStat);
             }
         } catch (SQLException ex) {
@@ -91,33 +90,17 @@ public class DB {
         try {
             ResultSet rs = createStatement.executeQuery(sql);
             if (rs.next()) {
-                stat = new Stats( rs.getString("username"), rs.getString("userpassword"), rs.getInt("highestcheckout"), 
-                                  rs.getInt("checkouttry"), rs.getInt("playedgames"), rs.getInt("useddartsnumber"), 
-                                  rs.getInt("below20"), rs.getInt("above20"), rs.getInt("above40"),
-                                  rs.getInt("above60"), rs.getInt("above80"), rs.getInt("above100"),
-                                  rs.getInt("above120"), rs.getInt("above140"), rs.getInt("above160"),
-                                  rs.getInt("p180"));
+                stat = new Stats( rs.getString("username"), rs.getInt("highestcheckout"), rs.getInt("checkouttry"), 
+                                  rs.getInt("playedgames"), rs.getInt("useddartsnumber"), rs.getInt("below20"), 
+                                  rs.getInt("above20"),     rs.getInt("above40"),         rs.getInt("above60"),
+                                  rs.getInt("above80"),     rs.getInt("above100"),        rs.getInt("above120"),
+                                  rs.getInt("above140"),    rs.getInt("above160"),        rs.getInt("p180"));
             }
         } catch (SQLException ex) {
             System.out.println("Valami baj van  a kiolvasáskor");
             System.out.println(""+ex);
         }
         return stat; 
-    }
-    
-    public String getUserPassword(String userName){
-        String sql = "select userpassword from darts where username='"+userName+"'";
-        String password = "";
-        try {
-            ResultSet rs = createStatement.executeQuery(sql);
-            if (rs.next()) {
-                password = rs.getString("userpassword");
-            }   
-        } catch (SQLException ex) {
-            System.out.println("Valami baj van  a kiolvasáskor");
-            System.out.println(""+ex);
-        }
-       return password; 
     }
     
     public ArrayList<String> getAllUserName(){
@@ -138,10 +121,10 @@ public class DB {
 
     public void addStat(String username, String password){
         try {
-            String sql = "insert into darts (username, userpassword, highestcheckout, checkouttry, playedgames, useddartsnumber, below20, above20, above40, above60, above80, above100, above120, above140, above160, p180) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into darts (username, highestcheckout, checkouttry, playedgames, useddartsnumber, below20, above20, above40, above60, above80, above100, above120, above140, above160, p180) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
+            preparedStatement.setInt(2, 0);
             preparedStatement.setInt(3, 0);
             preparedStatement.setInt(4, 0);
             preparedStatement.setInt(5, 0);
@@ -155,7 +138,6 @@ public class DB {
             preparedStatement.setInt(13, 0);
             preparedStatement.setInt(14, 0);
             preparedStatement.setInt(15, 0);
-            preparedStatement.setInt(16, 0);
             preparedStatement.execute();
         } catch (SQLException ex) {
             System.out.println("Valami baj van  a stat átadáskor");
@@ -201,16 +183,16 @@ public class DB {
         int checkoutTry = Integer.valueOf(oldStats.getChekoutTry())+Integer.valueOf(newStats.getChekoutTry());
         int checkoutPercentage = Integer.valueOf(oldStats.getPlayedGames())+Integer.valueOf(newStats.getPlayedGames());
         int usedDartsNumber = Integer.valueOf(oldStats.getUsedDartsNumber())+Integer.valueOf(newStats.getUsedDartsNumber());
-        int below20 = Integer.valueOf(oldStats.getBelow20())+Integer.valueOf(newStats.getBelow20());
-        int above20 = Integer.valueOf(oldStats.getAbove20())+Integer.valueOf(newStats.getAbove20());
-        int above40 = Integer.valueOf(oldStats.getAbove40())+Integer.valueOf(newStats.getAbove40());
-        int above60 = Integer.valueOf(oldStats.getAbove60())+Integer.valueOf(newStats.getAbove60());
-        int above80 = Integer.valueOf(oldStats.getAbove80())+Integer.valueOf(newStats.getAbove80());
+        int below20  = Integer.valueOf(oldStats.getBelow20())+Integer.valueOf(newStats.getBelow20());
+        int above20  = Integer.valueOf(oldStats.getAbove20())+Integer.valueOf(newStats.getAbove20());
+        int above40  = Integer.valueOf(oldStats.getAbove40())+Integer.valueOf(newStats.getAbove40());
+        int above60  = Integer.valueOf(oldStats.getAbove60())+Integer.valueOf(newStats.getAbove60());
+        int above80  = Integer.valueOf(oldStats.getAbove80())+Integer.valueOf(newStats.getAbove80());
         int above100 = Integer.valueOf(oldStats.getAbove100())+Integer.valueOf(newStats.getAbove100());
         int above120 = Integer.valueOf(oldStats.getAbove120())+Integer.valueOf(newStats.getAbove120());
         int above140 = Integer.valueOf(oldStats.getAbove140())+Integer.valueOf(newStats.getAbove140());
         int above160 = Integer.valueOf(oldStats.getAbove160())+Integer.valueOf(newStats.getAbove160());
-        int p180 = Integer.valueOf(oldStats.getP180())+Integer.valueOf(newStats.getP180());
+        int p180     = Integer.valueOf(oldStats.getP180())+Integer.valueOf(newStats.getP180());
         try {
             String sql = "update darts set highestcheckout=?, checkouttry=?, playedgames=?, useddartsnumber=?, below20=?, above20=?, above40=?, above60=?, above80=?, above100=?, above120=?, above140=?, above160=?, p180=? where username=?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -229,18 +211,6 @@ public class DB {
             preparedStatement.setInt(13, above160);
             preparedStatement.setInt(14, p180);
             preparedStatement.setString(15, oldStats.getUserName());
-            preparedStatement.execute();
-        } catch (SQLException ex) {
-            System.out.println("Valami baj van a stat hozzáadásakor");
-            System.out.println(""+ex);
-        }
-    }
-    public void saveNewPassword(String userName, String password){
-        try {
-            String sql = "update darts set userpassword = ? where username=?";
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, password);
-            preparedStatement.setString(2, userName);
             preparedStatement.execute();
         } catch (SQLException ex) {
             System.out.println("Valami baj van a stat hozzáadásakor");

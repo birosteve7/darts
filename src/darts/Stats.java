@@ -10,7 +10,6 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Stats {
     private SimpleStringProperty userName;
-    private SimpleStringProperty userPassword;
     private int Hi;
     private int HCo;
     private int chekoutTry;
@@ -28,7 +27,6 @@ public class Stats {
     private int p180;
 
     public Stats() {
-        this.userPassword = new SimpleStringProperty("");
         this.userName = new SimpleStringProperty("");
         this.Hi = 0;
         this.HCo = 0;
@@ -47,9 +45,8 @@ public class Stats {
         this.p180 = 0;
     }
     
-    public Stats(String userName, String password, int HCo, int chekoutTry, int playedGamesNumber, int usedDartsNumber, int below20, int above20, int above40,
+    public Stats(String userName, int HCo, int chekoutTry, int playedGamesNumber, int usedDartsNumber, int below20, int above20, int above40,
                  int above60, int above80, int above100, int above120, int above140, int above160, int p180) {
-        this.userPassword = new SimpleStringProperty(password);
         this.userName = new SimpleStringProperty(userName);
         this.HCo = HCo;
         this.chekoutTry = chekoutTry;
@@ -84,14 +81,6 @@ public class Stats {
         this.above140 = above140;
         this.above160 = above160;
         this.p180 = p180;
-    }
-
-    public String getUserPassword() {
-        return userPassword.get();
-    }
-
-    public void setUserPassword(String userName) {
-        this.userPassword.set(userName);
     }
     
     public String getUserName() {

@@ -2,34 +2,29 @@ package darts;
 
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
-import javax.swing.ButtonGroup;
 
 /**
  *
@@ -54,9 +49,11 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private Pane passwordPane;
     @FXML
-    private Pane allPlayerStatPane;
+    private Pane registerPane;
     @FXML 
     private Pane checkoutHappenedPane;
+    @FXML
+    private Pane userDataPane;
     @FXML
     private Label errorText;
     @FXML
@@ -160,20 +157,62 @@ public class DartFXMLVieWController implements Initializable {
     @FXML
     private TextField inputNewUserName;
     @FXML
-    private PasswordField inputNewPassword;
+    private PasswordField password;
     @FXML
-    private PasswordField inputNewPassword1;
+    private PasswordField password1;
     @FXML
     private Button btnSingUp;
     @FXML
     private ListView statNameList;
     @FXML
     private ListView statList;
+    @FXML
+    private Button btnRegister;
+    @FXML
+    private TextField inputFirstName;
+    @FXML
+    private TextField inputLastName;
+    @FXML
+    private TextField inputEmail;
+    @FXML
+    private TextField inputBirthDate;
+    @FXML
+    private ComboBox countryBox;
+    @FXML
+    private TextField inputCity;
+    @FXML
+    private Label outputFirstName;
+    @FXML
+    private Label outputLastName;
+    @FXML
+    private Label outputEmail;
+    @FXML
+    private Label outputBirthDate;
+    @FXML
+    private Label outputCountry;
+    @FXML
+    private Label outputCity;
+    @FXML
+    private TextField inputNewEmail;
+    @FXML
+    private ComboBox inputNewCountryBox;
+    @FXML
+    private TextField inputNewCity;
+    @FXML
+    private Button btnUserDataModify;
+    @FXML
+    private Button btnUserDataOK;
+    @FXML
+    private Button btnUserDataSave; 
+    
     
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     
     DB db = new DB();
+    UserDataDB userDataDB = new UserDataDB();
     Stats actualStat = new Stats();
+    UserData data = new UserData();
+    CountryList countries = new CountryList();
     ArrayList<Integer> scoreList = new ArrayList<Integer>();
     ToggleGroup group = new ToggleGroup();
     ToggleGroup usedDartsGroup = new ToggleGroup();
@@ -181,6 +220,7 @@ public class DartFXMLVieWController implements Initializable {
     boolean isSecondUndo = false;
     int latestCo = 0;
     int chekoutTry = 0;
+    List<CountryList.Country> countryList;
     
     @FXML
     private void handleButtonOne(ActionEvent event) {
@@ -242,7 +282,7 @@ public class DartFXMLVieWController implements Initializable {
         
         for (int i=0; i<userNames.size(); i++){
             if (actualUserName.equals(userNames.get(i))){
-                String savedPassword = db.getUserPassword(actualUserName);
+                String savedPassword = userDataDB.getUserPassword(actualUserName);
                 if(actualPassword.equals(savedPassword)){
                     paneChange(userPane,menuPane);
                     //db.getOwnStats(actualUserName);
@@ -252,84 +292,157 @@ public class DartFXMLVieWController implements Initializable {
                 }
             }
         }
-        alert("Your username or password are incorrect!");
+        alert("Your username or password are incorrect!", userPane);
         inputPassword.clear();
         return;
         
     }
+    
+    @FXML 
+    private void handleBtnRegister(){
+        countryBox.getItems().addAll(countryList);
+        paneChange(userPane, registerPane);
+    }
+    
     @FXML
-    private void handleSingUpBtn(ActionEvent event) {
+    private void handleRegisterBtn(ActionEvent event) {
         ArrayList<String> userNames = db.getAllUserName();
         String UserName = inputNewUserName.getText();
-        String Password = inputNewPassword.getText();
-        String repPassword = inputNewPassword1.getText();
+        String Password = password.getText();
+        String repPassword = password1.getText();
+        String email = inputEmail.getText();
+        String birthDate = inputBirthDate.getText();
+        
         for (int i=0; i<userNames.size(); i++){
             if (UserName.equals(userNames.get(i))){
-                alert("Name is in use, please chose another");
+                alert("Name is in use, please chose another",registerPane);
                 return;
             }
         }
         if (!Password.equals(repPassword)) {
-            alert("Your passwords don't match");
+            alert("Your passwords don't match",registerPane);
             return;
         }
+        if (!isValidEmail(email)){
+            alert("Please give a valid email adress", registerPane);
+            return;
+        }
+        if (!isvalidDate(birthDate)) {
+            alert("The birthdate is invalid", registerPane);
+            return;
+        }
+        System.out.println("Country"+countryBox.getSelectionModel().getSelectedItem().toString());
+        userDataDB.addData(UserName, Password, email, inputFirstName.getText(), inputLastName.getText(),
+                           birthDate, countryBox.getSelectionModel().getSelectedItem().toString(), inputCity.getText());
         db.addStat(UserName, Password);   
-        alert("Your account created. Plese log in");
+        alert("Your account created. Plese log in", userPane);
         inputNewUserName.clear();
-        inputNewPassword.clear();
-        inputNewPassword1.clear();
+        password.clear();
+        password1.clear();
+        
         clearStatData();
         return;
     }
     @FXML
     private void handleBtnStat(ActionEvent event) {
-        paneChange(menuPane,statPane);
         statNameListAddition(inputUserName.getText());
+        paneChange(menuPane,statPane);
     }
+    
     @FXML
     private void handleBtnGame(ActionEvent event) {
-        //actualStat = db.getOwnStats(actualStat.getUserName());
         paneChange(menuPane,scorePane);
     }
+    
     @FXML
     private void handleChangePasswordBtn(ActionEvent event) {
         paneChange(menuPane,passwordPane);
     }
+    
+    @FXML
+    private void handleBtnShowUserData(ActionEvent event) {
+        UserData data = userDataDB.getUserdata(inputUserName.getText());
+        outputFirstName.setText(data.getFirstName());
+        outputLastName.setText(data.getLastName());
+        outputBirthDate.setText(data.getBirthDate());
+        outputEmail.setText(data.getEmail());
+        outputCountry.setText(data.getCountry());
+        outputCity.setText(data.getCity());
+        paneChange(menuPane,userDataPane);
+    }
+    
+    @FXML
+    private void handleBtnUserDataCancel(ActionEvent event) {
+        paneChange(userDataPane, menuPane);
+    }
+    
+    @FXML
+    private void handleBtnChangeData(ActionEvent event) {
+        outputEmail.setVisible(false);
+        outputCountry.setVisible(false);
+        outputCity. setVisible(false);
+        btnUserDataOK.setVisible(false);
+        btnUserDataModify.setVisible(false);
+        btnUserDataSave.setVisible(true);
+        inputNewEmail.setVisible(true);
+        inputNewCountryBox.setVisible(true);
+        inputNewCity.setVisible(true);
+        inputNewCountryBox.getItems().addAll(countryList);
+    }
+    
+    @FXML
+    private void handleBtnUserDataSave(ActionEvent event) {
+        userDataDB.updateData(inputNewEmail.getText(),inputNewCountryBox.getSelectionModel().getSelectedItem().toString(), inputNewCity.getText(), inputUserName.getText());
+        UserData data = userDataDB.getUserdata(inputUserName.getText());
+        outputEmail.setText(data.getEmail());
+        outputCountry.setText(data.getCountry());
+        outputCity.setText(data.getCity());
+        outputEmail.setVisible(true);
+        outputCountry.setVisible(true);
+        outputCity. setVisible(true);
+        btnUserDataOK.setVisible(true);
+        btnUserDataModify.setVisible(true);
+        btnUserDataSave.setVisible(false);
+        inputNewEmail.setVisible(false);
+        inputNewCountryBox.setVisible(false);
+        inputNewCity.setVisible(false);
+    }
+    
     @FXML
     private void handleCancelNewPasswordBtn(ActionEvent event) {
         paneChange(passwordPane, menuPane);
     }
+    
     @FXML
     private void handleLogOutBtn(ActionEvent event) {
-        paneChange(menuPane, userPane);
         clearStatData();
         inputPassword.clear();
         inputUserName.clear();
-        inputNewUserName.clear();
-        inputNewPassword.clear();
-        inputNewPassword1.clear();
+        paneChange(menuPane, userPane);
     }
+    
     @FXML
     private void handleSaveNewPasswordBtn(ActionEvent event) {
-        String savedPassword = db.getUserPassword(actualStat.getUserName());
+        String savedPassword = userDataDB.getUserPassword(actualStat.getUserName());
         
         if (!currentPassword.getText().equals(savedPassword)) {
-            alert("The given password don't match with the saved one");
+            alert("The given password don't match with the saved one", passwordPane);
             return;
         }
         if (!newPassword1.getText().equals(newPassword2.getText())) {
-            alert("The new password dooesn't match");
+            alert("The new password dooesn't match", passwordPane);
             return;
         }
         
-        db.saveNewPassword(actualStat.getUserName(),newPassword1.getText());
+        userDataDB.saveNewPassword(actualStat.getUserName(),newPassword1.getText());
         paneChange(passwordPane, menuPane);
     }
+    
     @FXML
     private void handleBtnExit(ActionEvent event) {
-        paneChange(statPane,menuPane);
         statNameList.getItems().clear();
         statList.getItems().clear();
+        paneChange(statPane,menuPane);
     }
     @FXML
     private void handleBtnBackfromScore(ActionEvent event) {
@@ -353,13 +466,13 @@ public class DartFXMLVieWController implements Initializable {
             inputScore.getText().equals("");
         }
         catch(Exception e){
-             alert("Give a number from 0 to 180"); 
+             alert("Give a number from 0 to 180", scorePane); 
              return;
         }  
         int actualScore    = Integer.valueOf(inputScore.getText());
         int remainingScore = Integer.valueOf(outputRem.getText());
         if (actualScore > 180){
-            alert("The score must less than 180");
+            alert("The score must less than 180", scorePane);
             inputScore.clear();
             return;
         }
@@ -372,11 +485,11 @@ public class DartFXMLVieWController implements Initializable {
     private void handleBtnUndo(ActionEvent event) {
         int size = scoreList.size(); 
         if (isSecondUndo) {
-            alert("You can only use once the 'Undo' button");
+            alert("You can only use once the 'Undo' button", scorePane);
             return;
         }
         if(size == 0) {
-            alert("There is nothing to undo");
+            alert("There is nothing to undo", scorePane);
             return;
         }
         int deletedScore = scoreList.get(size-1);
@@ -398,7 +511,7 @@ public class DartFXMLVieWController implements Initializable {
                                          usedDartsGroup.getSelectedToggle().toString().length()-1));
             System.out.println("RemScore: "+outputRem.getText());
             if (!isValidCheckoutData(checkoutNumber,dartNumber)){
-                alert("Your given data is invalid");
+                alert("Your given data is invalid", checkoutPane);
                 return;
             }
             chekoutTry+=checkoutNumber;
@@ -424,33 +537,10 @@ public class DartFXMLVieWController implements Initializable {
         scorePane.setOpacity(0);
     }
     
-     private void alert(String text) {
-        Label label = new Label(text);
-        Button alertButton = new Button("OK");
-        VBox vbox = new VBox(label, alertButton);
-        
-        scorePane.setDisable(true);
-        scorePane.setOpacity(0.4);
-        vbox.setAlignment(Pos.CENTER);
-        
-        alertButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                scorePane.setDisable(false);
-                scorePane.setOpacity(1);
-                vbox.setVisible(false);
-            }
-        });
-        
-        anchorPane.getChildren().add(vbox);
-        anchorPane.setTopAnchor(vbox, 200.0);
-        anchorPane.setLeftAnchor(vbox, 85.0);
-    }
-    
     @FXML
     private void updateStatToDB (){
         if(actualStat.getPlayedGames() == 0 || !outputRem.getText().equals("501")) {
-            alert("You cannont save the statistic yet");
+            alert("You cannont save the statistic yet",scorePane);
             return;
         }
         System.out.println("played games: "+actualStat.getPlayedGames());
@@ -839,6 +929,48 @@ public class DartFXMLVieWController implements Initializable {
         return true;
     }
     
+    public boolean isValidEmail(String email){
+        if (email.length() > 3 && email.contains("@") && email.contains("."))
+            return true;
+ 
+        return false;
+    }
+    
+    public boolean isvalidDate(String strDate) {
+        DateTimeFormatter f = DateTimeFormatter.ofPattern ( "dd.MM.uuuu" );
+        try {
+            LocalDate ld = LocalDate.parse ( strDate , f );
+            System.out.println ( "ld: " + ld );
+        } catch ( Exception e ) {
+            System.out.println ( "ERROR: " + e );
+            return false;
+        }
+        return true;
+    } 
+        
+    private void alert(String text, Pane pane) {
+        Label label = new Label(text);
+        Button alertButton = new Button("OK");
+        VBox vbox = new VBox(label, alertButton);
+        
+        pane.setDisable(true);
+        pane.setOpacity(0.4);
+        vbox.setAlignment(Pos.CENTER);
+        
+        alertButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                pane.setDisable(false);
+                pane.setOpacity(1);
+                vbox.setVisible(false);
+            }
+        });
+        
+        anchorPane.getChildren().add(vbox);
+        anchorPane.setTopAnchor(vbox, 200.0);
+        anchorPane.setLeftAnchor(vbox, 85.0);
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         radio0.setToggleGroup(group);
@@ -848,5 +980,6 @@ public class DartFXMLVieWController implements Initializable {
         checkout1.setToggleGroup(usedDartsGroup);
         checkout2.setToggleGroup(usedDartsGroup);
         checkout3.setToggleGroup(usedDartsGroup);
+        countryList = countries.getCountry();
     }
 }
