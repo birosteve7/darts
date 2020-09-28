@@ -285,7 +285,6 @@ public class DartFXMLVieWController implements Initializable {
                 String savedPassword = userDataDB.getUserPassword(actualUserName);
                 if(actualPassword.equals(savedPassword)){
                     paneChange(userPane,menuPane);
-                    //db.getOwnStats(actualUserName);
                     initActualStat(actualUserName);
                     outputUserName.setText(actualUserName+"!");
                     return;

@@ -54,7 +54,7 @@ public class UserDataDB {
         }
         
         try {
-            ResultSet rs = dbmd.getTables(null, "APP", "Data", null);
+            ResultSet rs = dbmd.getTables(null, "APP", "USERDATA", null);
             if(!rs.next())
             { 
                 createStatement.execute("create table userdata( username varchar(10), userpassword varchar(12), email varchar(25), firstname varchar(10), lastname varchar(10), birthdate date, country varchar(25), city varchar(15))");
