@@ -107,15 +107,15 @@
                </font>
             </Label>
             <Button id="btnRegister" fx:id="btnRegister" layoutX="284.0" layoutY="427.0" mnemonicParsing="false" onAction="#handleRegisterBtn" prefHeight="30.0" prefWidth="74.0" text="Register" />
-            <TextField id="inputNewUserName" fx:id="inputNewUserName" layoutX="125.0" layoutY="60.0" />
-            <PasswordField id="password" fx:id="password" layoutX="124.0" layoutY="99.0" />
-            <PasswordField id="password1" fx:id="password1" layoutX="124.0" layoutY="132.0" />
-            <TextField id="inputFirstName" fx:id="inputFirstName" layoutX="127.0" layoutY="207.0" prefHeight="26.0" prefWidth="161.0" />
-            <TextField id="inputLastName" fx:id="inputLastName" layoutX="127.0" layoutY="240.0" prefHeight="26.0" prefWidth="161.0" />
-            <TextField id="inputEmail" fx:id="inputEmail" layoutX="127.0" layoutY="274.0" prefHeight="26.0" prefWidth="161.0" />
-            <TextField id="inputBirthDate" fx:id="inputBirthDate" layoutX="127.0" layoutY="310.0" prefHeight="26.0" prefWidth="161.0" />
+            <TextField id="inputNewUserName" fx:id="inputNewUserName" layoutX="125.0" layoutY="60.0" promptText="Your login name" />
+            <PasswordField id="password" fx:id="password" layoutX="124.0" layoutY="99.0" promptText="Password" />
+            <PasswordField id="password1" fx:id="password1" layoutX="124.0" layoutY="132.0" promptText="Password again" />
+            <TextField id="inputFirstName" fx:id="inputFirstName" layoutX="127.0" layoutY="207.0" prefHeight="26.0" prefWidth="161.0" promptText="Smith" />
+            <TextField id="inputLastName" fx:id="inputLastName" layoutX="127.0" layoutY="240.0" prefHeight="26.0" prefWidth="161.0" promptText="Jack" />
+            <TextField id="inputEmail" fx:id="inputEmail" layoutX="127.0" layoutY="274.0" prefHeight="26.0" prefWidth="161.0" promptText="xyz@hyz.org" />
+            <TextField id="inputBirthDate" fx:id="inputBirthDate" layoutX="127.0" layoutY="310.0" prefHeight="26.0" prefWidth="161.0" promptText="DD.MM.YYYY" />
             <ComboBox id="countryBox" fx:id="countryBox" layoutX="127.0" layoutY="348.0" prefHeight="26.0" prefWidth="161.0" />
-            <TextField id="inputCity" fx:id="inputCity" layoutX="125.0" layoutY="387.0" prefHeight="25.0" prefWidth="161.0" />
+            <TextField id="inputCity" fx:id="inputCity" layoutX="125.0" layoutY="387.0" prefHeight="25.0" prefWidth="161.0" promptText="New York" />
          </children>
       </Pane>
       <Pane id="statPane" fx:id="statPane" layoutY="1.0" prefHeight="497.0" prefWidth="370.0" visible="false" AnchorPane.bottomAnchor="-19.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
