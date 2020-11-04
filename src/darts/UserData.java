@@ -49,8 +49,8 @@ public class UserData {
         return userPassword.get();
     }
 
-    public void setUserPassword(String userName) {
-        this.userPassword.set(userName);
+    public void setUserPassword(String password) {
+        this.userPassword.set(password);
     }
     
     public String getUserName() {

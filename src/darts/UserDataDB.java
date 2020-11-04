@@ -33,35 +33,35 @@ public class UserDataDB {
         try {
             conn = DriverManager.getConnection(URL);
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a connection (híd) létrehozásakor.");
-            System.out.println(""+ex);
+            System.err.println("Create connection error.");
+            System.err.println(""+ex);
         }
         
         if (conn != null){
             try {
                 createStatement = conn.createStatement();
             } catch (SQLException ex) {
-                System.out.println("Valami baj van van a createStatament (teherautó) létrehozásakor.");
-                System.out.println(""+ex);
+                System.err.println("createStatament error");
+                System.err.println(""+ex);
             }
         }
         
         try {           
             dbmd = conn.getMetaData();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a DatabaseMetaData (adatbázis leírása) létrehozásakor..");
-            System.out.println(""+ex);
+            System.err.println("Create DatabaseMetaData error");
+            System.err.println(""+ex);
         }
         
         try {
-            ResultSet rs = dbmd.getTables(null, "APP", "Data", null);
+            ResultSet rs = dbmd.getTables(null, "APP", "USERDATA", null);
             if(!rs.next())
             { 
                 createStatement.execute("create table userdata( username varchar(10), userpassword varchar(12), email varchar(25), firstname varchar(10), lastname varchar(10), birthdate date, country varchar(25), city varchar(15))");
             }
         } catch (SQLException ex) {
-            System.out.println("Valami baj van az adattáblák létrehozásakor.");
-            System.out.println(""+ex);
+            System.err.println("Create Database table error");
+            System.err.println(""+ex);
         }       
     }
     public String getUserPassword(String userName){
@@ -73,8 +73,8 @@ public class UserDataDB {
                 password = rs.getString("userpassword");
             }   
         } catch (SQLException ex) {
-            System.out.println("Valami baj van  data a kiolvasáskor");
-            System.out.println(""+ex);
+            System.err.println("Database read error(getUserPassword)");
+            System.err.println(""+ex);
         }
        return password; 
     }
@@ -87,15 +87,13 @@ public class UserDataDB {
             preparedStatement.setString(2, userName);
             preparedStatement.execute();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a data hozzáadásakor");
-            System.out.println(""+ex);
+            System.err.println("Database write error(saveNewpassword)");
+            System.err.println(""+ex);
         }
     }
     
     public UserData getUserdata(String userName){
-        System.out.println("darts.UserDataDB.getUserdata()");
         String sql = "select * from userdata where username='"+userName+"'";
-        System.out.println("sql: "+sql);
         UserData data = null;
         try {
             ResultSet rs = createStatement.executeQuery(sql);
@@ -105,14 +103,13 @@ public class UserDataDB {
                                      rs.getString("country"),   rs.getString("city"));
             }
         } catch (SQLException ex) {
-            System.out.println("Valami baj van  data a kiolvasáskor");
-            System.out.println(""+ex);
+            System.err.println("Database read error(getuserData)");
+            System.err.println(""+ex);
         }
         return data; 
     }
 
     public void addData(String userName, String userPassword, String email, String firstName, String lastName, String birthDate, String country, String city){
-        System.out.println("darts.UserDataDB.addData()");
         try {
         String sql = "insert into userdata (username, userpassword, email, firstname, lastname, birthdate, country, city) values (?,?,?,?,?,?,?,?)";
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -126,14 +123,12 @@ public class UserDataDB {
         preparedStatement.setString(8, city);
         preparedStatement.execute();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a contact hozzáadásakor");
-            System.out.println(""+ex);
+            System.err.println("Database write error(addData)");
+            System.err.println(""+ex);
         }
     }
     
-    public void updateData(String email, String country, String city, String userName){
-        System.out.println("darts.UserDataDB.updateData()");
-        
+    public void updateData(String email, String country, String city, String userName){      
         try {
             String sql = "update userdata set email=?, country=?, city=? where username=?";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -143,8 +138,8 @@ public class UserDataDB {
             preparedStatement.setString(4, userName);
             preparedStatement.execute();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a stat hozzáadásakor");
-            System.out.println(""+ex);
+            System.err.println("Database write error(updateData)");
+            System.err.println(""+ex);
         }
     }
    

@@ -18,8 +18,8 @@ public class Darts extends Application {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("stylesheet.css").toExternalForm());
         stage.setResizable(false);
-        stage.setWidth(383);
-        stage.setHeight(530);
+        stage.setWidth(380);
+        stage.setHeight(520);
         stage.setScene(scene);
         stage.show();
     }

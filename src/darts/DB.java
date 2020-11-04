@@ -31,24 +31,24 @@ public class DB {
         try {
             conn = DriverManager.getConnection(URL);
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a connection (híd) létrehozásakor.");
-            System.out.println(""+ex);
+            System.err.println("Create Connection error");
+            System.err.println(""+ex);
         }
         
         if (conn != null){
             try {
                 createStatement = conn.createStatement();
             } catch (SQLException ex) {
-                System.out.println("Valami baj van van a createStatament (teherautó) létrehozásakor.");
-                System.out.println(""+ex);
+                System.err.println("CreateStatament error");
+                System.err.println(""+ex);
             }
         }
         
         try {           
             dbmd = conn.getMetaData();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a DatabaseMetaData (adatbázis leírása) létrehozásakor..");
-            System.out.println(""+ex);
+            System.err.println("DatabaseMetaData creation error");
+            System.err.println(""+ex);
         }
         
         try {
@@ -58,8 +58,8 @@ public class DB {
                 createStatement.execute("create table darts( username varchar(10), highestcheckout int, checkouttry int, playedgames int, useddartsnumber int, below20 int, above20 int, above40 int, above60 int, above80 int, above100 int, above120 int, above140 int, above160 int, p180 int)");
             }
         } catch (SQLException ex) {
-            System.out.println("Valami baj van az adattáblák létrehozásakor.");
-            System.out.println(""+ex);
+            System.err.println("Database table creation error");
+            System.err.println(""+ex);
         }       
     }
     
@@ -78,8 +78,8 @@ public class DB {
                 stats.add(actualStat);
             }
         } catch (SQLException ex) {
-            System.out.println("Valami baj van  a kiolvasáskor");
-            System.out.println(""+ex);
+            System.err.println("Database read error(getAllStats)");
+            System.err.println(""+ex);
         }
        return stats; 
     }
@@ -97,8 +97,8 @@ public class DB {
                                   rs.getInt("above140"),    rs.getInt("above160"),        rs.getInt("p180"));
             }
         } catch (SQLException ex) {
-            System.out.println("Valami baj van  a kiolvasáskor");
-            System.out.println(""+ex);
+            System.err.println("Database read error(getOwnStat)");
+            System.err.println(""+ex);
         }
         return stat; 
     }
@@ -112,14 +112,14 @@ public class DB {
                 userNames.add( rs.getString("username"));
             }
         } catch (SQLException ex) {
-            System.out.println("Valami baj van  a kiolvasáskor");
-            System.out.println(""+ex);
+            System.err.println("Database read error(GetAllUserName)");
+            System.err.println(""+ex);
         }
         return userNames; 
     }
     
 
-    public void addStat(String username, String password){
+    public void addStat(String username){
         try {
             String sql = "insert into darts (username, highestcheckout, checkouttry, playedgames, useddartsnumber, below20, above20, above40, above60, above80, above100, above120, above140, above160, p180) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -140,8 +140,8 @@ public class DB {
             preparedStatement.setInt(15, 0);
             preparedStatement.execute();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van  a stat átadáskor");
-            System.out.println(""+ex);
+            System.err.println("Stat wirte error(addStat)");
+            System.err.println(""+ex);
         }
     }
     
@@ -166,16 +166,18 @@ public class DB {
             preparedStatement.setString(15, userName);
             preparedStatement.execute();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van statok törlésekor átadáskor");
-            System.out.println(""+ex);
+            System.err.println("Stat deletion error(clearStat)");
+            System.err.println(""+ex);
         }
     }
     
     public void updateStat(Stats newStats){
         Integer Hi=0;
         Integer HCo=0;
+        System.out.println("Old Username: "+newStats.getUserName());
         Stats oldStats = getOwnStats(newStats.getUserName());
-    
+        System.out.println("New Co"+newStats.getUserName());
+        
         if (Integer.valueOf(newStats.getHCo()) > Integer.valueOf(oldStats.getHCo()))
             HCo = Integer.valueOf(newStats.getHCo());
         else
@@ -213,8 +215,8 @@ public class DB {
             preparedStatement.setString(15, oldStats.getUserName());
             preparedStatement.execute();
         } catch (SQLException ex) {
-            System.out.println("Valami baj van a stat hozzáadásakor");
-            System.out.println(""+ex);
+            System.err.println("Stat addition error to Database(updateStat)");
+            System.err.println(""+ex);
         }
     }
    
