@@ -7,6 +7,7 @@ package darts;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  *
@@ -17,32 +18,23 @@ public class Game {
     private ArrayList<Integer> scoreList = new ArrayList<Integer>();
     private int remainingScore = 501;
     private int latestScore = 0;
-    private int latestCo = 0;
     private int chekoutTry = 0;
     private int highestCo = 0;
     private int usedDartsNumber = 0;
     private int playedGamesNumber = 0;
-    private int below20;
-    private int above20;
-    private int above40;
-    private int above60;
-    private int above80;
-    private int above100;
-    private int above120;
-    private int above140;
-    private int above160;
-    private int p180;
+    private HashMap<String, Integer> rangeMap = new HashMap<String, Integer>();
     private int legPos = 0;
     private double doublePer = 0.0;
     private double actualAvg = 0.0;
     private boolean isSecondUndo = false;
     private boolean possibleCheckout = false;
     private boolean coHappened = false;
-
-    
-    
     public ArrayList<Integer> getScoreList() {
         return scoreList;
+    }
+
+    public Game() {
+        initHashMap();
     }
 
     public void setScoreList(ArrayList<Integer> scoreList) {
@@ -74,91 +66,83 @@ public class Game {
     }
     
     public int getBelow20() {
-        return below20;
+        return this.rangeMap.get("20-");
     }
 
     public void setBelow20() {
-        this.below20 = getBelow20()+1;
+        this.rangeMap.put("20-", getBelow20()+1);
     }
 
     public int getAbove20() {
-        return above20;
+        return this.rangeMap.get("20+");
     }
 
     public void setAbove20() {
-        this.above20 = getAbove20()+1;
+        this.rangeMap.put("20+", getAbove20()+1);
     }
 
     public int getAbove40() {
-        return above40;
+        return this.rangeMap.get("40+");
     }
 
     public void setAbove40() {
-        this.above40 = getAbove40()+1;
+        this.rangeMap.put("40+", getAbove40()+1);
     }
 
     public int getAbove60() {
-        return above60;
+        return this.rangeMap.get("60+");
     }
 
     public void setAbove60() {
-        this.above60 = getAbove60()+1;
+        this.rangeMap.put("60+", getAbove60()+1);
     }
 
     public int getAbove80() {
-        return above80;
+        return this.rangeMap.get("80+");
     }
 
     public void setAbove80() {
-        this.above80 = getAbove80()+1;
+        this.rangeMap.put("80+", getAbove80()+1);
     }
 
     public int getAbove100() {
-        return above100;
+        return this.rangeMap.get("100+");
     }
 
     public void setAbove100() {
-        this.above100 = getAbove100()+1;
+        this.rangeMap.put("100+", getAbove100()+1);
     }
 
     public int getAbove120() {
-        return above120;
+        return this.rangeMap.get("120+");
     }
 
     public void setAbove120() {
-        this.above120 = getAbove120()+1;
+        this.rangeMap.put("120+", getAbove120()+1);
     }
 
     public int getAbove140() {
-        return above140;
+        return this.rangeMap.get("140+");
     }
 
     public void setAbove140() {
-        this.above140 = getAbove140()+1;
+        this.rangeMap.put("140+", getAbove140()+1);
     }
 
     public int getAbove160() {
-        return above160;
+        return this.rangeMap.get("160+");
     }
 
     public void setAbove160() {
-        this.above160 = getAbove160()+1;
+        this.rangeMap.put("160+", getAbove160()+1);
     }
 
     public int getP180() {
-        return p180;
+        return this.rangeMap.get("180");
     }
 
     public void setP180() {
-        this.p180 = getP180()+1;
-    }
-    
-    public String getLatestCo() {
-        return String.valueOf(latestCo);
-    }
-
-    public void setLatestCo(int latestCo) {
-        this.latestCo = latestCo;
+        this.rangeMap.put("180", getP180()+1);
     }
 
     public int getHighestCo() {
@@ -256,7 +240,6 @@ public class Game {
     }
     
     public void initActualStat(String name){
-        setHighestCo(0);
         setPlayedGamesNumber(0);
         setUsedDartsNumber(0);
         setChekoutTry(0);
@@ -264,8 +247,8 @@ public class Game {
     
     public void checkOutHappened(){
         int checkOutScore = scoreList.get(scoreList.size()-1);
-        if ( checkOutScore > latestCo) {
-            latestCo = checkOutScore;
+        if ( checkOutScore > highestCo) {
+            highestCo = checkOutScore;
         }
     }
     
@@ -493,12 +476,24 @@ public class Game {
         return avarage;
     }
     
-    public String getchekoutPercentage(){
+    public double getchekoutPercentage(){
         int percent = 0;
         if (chekoutTry != 0)
             percent = getPlayedGamesNumber()*100/chekoutTry;
         
-        return String.valueOf(percent);    
+        return percent;    
     }
     
+    private void initHashMap(){
+        rangeMap.put("20-",  0);
+        rangeMap.put("20+",  0);
+        rangeMap.put("40+",  0);
+        rangeMap.put("60+",  0);
+        rangeMap.put("80+",  0);
+        rangeMap.put("100+", 0);
+        rangeMap.put("120+", 0);
+        rangeMap.put("140+", 0);
+        rangeMap.put("160+", 0);
+        rangeMap.put("180",  0);
+    }
 }

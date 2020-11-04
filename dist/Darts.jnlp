@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Darts.jar" size="20679" download="eager" />
+    <jar href="Darts.jar" size="33415" download="eager" />
     <jar href="lib/derby.jar" size="3232770" download="eager" />
     <jar href="lib/derbyLocale_cs.jar" size="94559" download="eager" />
     <jar href="lib/derbyLocale_de_DE.jar" size="112080" download="eager" />
@@ -31,6 +31,7 @@
     <jar href="lib/derbyoptionaltools.jar" size="82287" download="eager" />
     <jar href="lib/derbyrun.jar" size="9634" download="eager" />
     <jar href="lib/derbytools.jar" size="230725" download="eager" />
+    <jar href="lib/junit-4.12.jar" size="311555" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Darts" >
     <param name="requiredFXVersion" value="2.2+"/>

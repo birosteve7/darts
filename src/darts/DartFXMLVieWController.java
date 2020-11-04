@@ -521,8 +521,8 @@ public class DartFXMLVieWController implements Initializable {
     
     @FXML
     private void updateStatToDB (){
-        Stats actualStat = new Stats(data.getUserName(), game.getHighestCo(), game.getChekoutTry(), game.getPlayedGamesNumber(),
-                                     game.getUsedDartsNumber(), game.getBelow20(), game.getAbove20(), game.getAbove40(),
+        Stats actualStat = new Stats(data.getUserName(), game.getHighestCo(), game.getChekoutTry(), game.getPlayedGamesNumber(), game.getUsedDartsNumber(), 
+                                     game.getBelow20(), game.getAbove20(), game.getAbove40(),
                                      game.getAbove60(), game.getAbove80(), game.getAbove100(), game.getAbove120(), 
                                      game.getAbove140(),game.getAbove60(), game.getP180());
         if(actualStat.getPlayedGames() == 0 || !game.getRemainigScore().equals("501")) {
@@ -676,8 +676,8 @@ public class DartFXMLVieWController implements Initializable {
     }
     
     public void setGameDatas(){
-        setLabelValue(outputHCo, game.getLatestCo());
-        setLabelValue(outputDouble, game.getchekoutPercentage());
+        setLabelValue(outputHCo, String.valueOf(game.getHighestCo()));
+        setLabelValue(outputDouble, String.valueOf(game.getchekoutPercentage()));
         setLabelValue(gameAvg,String.valueOf(df2.format(game.getAvarage())));
     }
     
