@@ -1,8 +1,8 @@
 ----------------------------------------------------------------
-Tue Nov 03 19:23:21 CST 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0175-90d9-ea77-0000082b9c70 
+Thu Nov 05 09:46:49 CST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0175-9916-ca53-000007d833f0 
 on database directory C:\Users\István\Documents\NetBeansProjects\Darts\dartStatDB with class loader sun.misc.Launcher$AppClassLoader@55f96302 
-Loaded from file:/C:/Users/Istv%c3%a1n/Documents/NetBeansProjects/Darts/dist/run1774458539/lib/derby.jar
+Loaded from file:/C:/Users/Istv%c3%a1n/Documents/NetBeansProjects/Darts/dist/run182441638/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_05-b13
 user.dir=C:\Users\István\Documents\NetBeansProjects\Darts
@@ -12,10 +12,10 @@ os.version=6.3
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Tue Nov 03 19:23:22 CST 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance 176240b2-0175-90d9-ea77-0000082b9c70 
+Thu Nov 05 09:46:49 CST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a02ac013-0175-9916-ca53-000007d833f0 
 on database directory C:\Users\István\Documents\NetBeansProjects\Darts\UsersStatDB with class loader sun.misc.Launcher$AppClassLoader@55f96302 
-Loaded from file:/C:/Users/Istv%c3%a1n/Documents/NetBeansProjects/Darts/dist/run1774458539/lib/derby.jar
+Loaded from file:/C:/Users/Istv%c3%a1n/Documents/NetBeansProjects/Darts/dist/run182441638/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_05-b13
 user.dir=C:\Users\István\Documents\NetBeansProjects\Darts

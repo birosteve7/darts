@@ -32,7 +32,11 @@ public class Game {
     public ArrayList<Integer> getScoreList() {
         return scoreList;
     }
-
+    
+    public void addScorelist(int score){
+        scoreList.add(score);
+    }
+    
     public Game() {
         initHashMap();
     }
@@ -43,6 +47,10 @@ public class Game {
     
     public void setRemainingScore(int remainingScore) {
         this.remainingScore = remainingScore;
+    }
+    
+    public void setLatestScore(int score){
+        this.latestScore = score;
     }
     
     public int getLatestScore() {
@@ -166,13 +174,12 @@ public class Game {
     }
 
     public String getActualAvg() {
-        double avarages  = 0;
         int actualLegSum = 0;
         
         for(int i=legPos; i<scoreList.size();i++){
             actualLegSum += scoreList.get(i);
         }
-        actualAvg = actualLegSum/(scoreList.size()-legPos);
+        actualAvg = actualLegSum/(double)(scoreList.size()-legPos);
         return String.valueOf(actualAvg);
     }
     
@@ -253,14 +260,13 @@ public class Game {
     }
     
     public String removeLastScore() {
-        int size = scoreList.size();
+        int size = getScoreListSize();
         if (isSecondUndo) {
             return "You can only use once the 'Undo' button";
         }
         if(size == 0) {
             return "There is nothing to delete";
         }
-        
         int deletedScore = scoreList.get(size-1);
         setRemainingScore(remainingScore + deletedScore);
         scoreList.remove(size-1);
@@ -452,7 +458,7 @@ public class Game {
     
     public boolean isValidCheckoutData(int checkout, int usedDarts) {
         int remainScore = latestScore;
-        if ( (remainScore <= 40 || remainScore == 50) ) {
+        if ( (remainScore <= 40 && remainScore %2 == 0) || remainScore == 50 ) {
             if (usedDarts >= checkout)
                 return true;
             else 
