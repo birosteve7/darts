@@ -5,6 +5,7 @@
  */
 package darts;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +31,9 @@ public class Game {
     private boolean possibleCheckout = false;
     private boolean coHappened = false;
     public ArrayList<Integer> getScoreList() {
-        return scoreList;
+        return scoreList;  
     }
+    private static DecimalFormat df = new DecimalFormat("0.00");
     
     public void addScorelist(int score){
         scoreList.add(score);
@@ -180,7 +182,7 @@ public class Game {
             actualLegSum += scoreList.get(i);
         }
         actualAvg = actualLegSum/(double)(scoreList.size()-legPos);
-        return String.valueOf(actualAvg);
+        return df.format(actualAvg);
     }
     
     public void setIsSecondUndo(boolean isSecondUndo) {

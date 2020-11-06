@@ -66,15 +66,15 @@ public class GameTest {
     }
     
     
-/*    @Test
+    @Test
     public void testGetActualAvg(){
-        double expResult = 113.3;
+        double expResult = 113.33;
         game.addScorelist(180);
         game.addScorelist(60);
         game.addScorelist(100);
         double result = Double.valueOf(game.getActualAvg());
         assertEquals("testAvarage: ",expResult, result, 0);
-    }*/
+    }
     
     @Test
     public void testCheckoutTable(){
